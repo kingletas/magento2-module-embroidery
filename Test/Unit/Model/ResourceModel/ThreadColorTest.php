@@ -66,11 +66,11 @@ class ThreadColorTest extends TestCase
         $resource = (new ReflectionClass(ThreadColor::class))->newInstanceWithoutConstructor();
         (new ReflectionMethod($resource, '_construct'))->invoke($resource);
 
-        self::assertSame(
+        $this->assertSame(
             ThreadColor::TABLE_NAME,
             (new ReflectionProperty(ThreadColor::class, '_mainTable'))->getValue($resource)
         );
-        self::assertSame(ThreadColorInterface::THREAD_COLOR_ID, $resource->getIdFieldName());
+        $this->assertSame(ThreadColorInterface::THREAD_COLOR_ID, $resource->getIdFieldName());
     }
 
     /**
@@ -83,9 +83,9 @@ class ThreadColorTest extends TestCase
             [ThreadColorInterface::CODE => 'T-101', ThreadColorInterface::NAME => 'Navy'],
         ];
 
-        self::assertSame(2, $this->resource()->upsertMany($rows));
-        self::assertCount(1, $this->upserts);
-        self::assertSame($rows, $this->upserts[0]['rows']);
+        $this->assertSame(2, $this->resource()->upsertMany($rows));
+        $this->assertCount(1, $this->upserts);
+        $this->assertSame($rows, $this->upserts[0]['rows']);
     }
 
     /**
@@ -96,16 +96,16 @@ class ThreadColorTest extends TestCase
     {
         $this->resource()->upsertMany([[ThreadColorInterface::CODE => 'T-100']]);
 
-        self::assertNotContains(ThreadColorInterface::CODE, $this->upserts[0]['update']);
-        self::assertNotContains(ThreadColorInterface::THREAD_COLOR_ID, $this->upserts[0]['update']);
-        self::assertContains(ThreadColorInterface::NAME, $this->upserts[0]['update']);
-        self::assertContains(ThreadColorInterface::IS_ACTIVE, $this->upserts[0]['update']);
+        $this->assertNotContains(ThreadColorInterface::CODE, $this->upserts[0]['update']);
+        $this->assertNotContains(ThreadColorInterface::THREAD_COLOR_ID, $this->upserts[0]['update']);
+        $this->assertContains(ThreadColorInterface::NAME, $this->upserts[0]['update']);
+        $this->assertContains(ThreadColorInterface::IS_ACTIVE, $this->upserts[0]['update']);
     }
 
     public function testAnEmptyUpsertIsANoOp(): void
     {
-        self::assertSame(0, $this->resource()->upsertMany([]));
-        self::assertSame([], $this->upserts);
+        $this->assertSame(0, $this->resource()->upsertMany([]));
+        $this->assertSame([], $this->upserts);
     }
 
     public function testColoursAreLoadedByCodeInOneQuery(): void
@@ -117,16 +117,16 @@ class ThreadColorTest extends TestCase
 
         $loaded = $this->resource()->loadByCodes(['T-100', 'T-101']);
 
-        self::assertSame(['T-100', 'T-101'], array_keys($loaded));
-        self::assertSame('Navy', $loaded['T-101'][ThreadColorInterface::NAME]);
+        $this->assertSame(['T-100', 'T-101'], array_keys($loaded));
+        $this->assertSame('Navy', $loaded['T-101'][ThreadColorInterface::NAME]);
     }
 
     public function testTheLookupIsRestrictedToTheRequestedCodes(): void
     {
         $this->resource()->loadByCodes(['T-100', 'T-101']);
 
-        self::assertSame(ThreadColorInterface::CODE . ' IN (?)', $this->conditions[0]['condition']);
-        self::assertSame(['T-100', 'T-101'], $this->conditions[0]['value']);
+        $this->assertSame(ThreadColorInterface::CODE . ' IN (?)', $this->conditions[0]['condition']);
+        $this->assertSame(['T-100', 'T-101'], $this->conditions[0]['value']);
     }
 
     /**
@@ -137,7 +137,7 @@ class ThreadColorTest extends TestCase
     {
         $this->resource()->loadByCodes(['T-100', 'T-100', '', 'T-101']);
 
-        self::assertSame(['T-100', 'T-101'], $this->conditions[0]['value']);
+        $this->assertSame(['T-100', 'T-101'], $this->conditions[0]['value']);
     }
 
     /**
@@ -146,9 +146,9 @@ class ThreadColorTest extends TestCase
      */
     public function testAnEmptyCodeSetIsAnsweredWithoutQuerying(): void
     {
-        self::assertSame([], $this->resource()->loadByCodes([]));
-        self::assertSame([], $this->resource()->loadByCodes(['', '0']));
-        self::assertSame([], $this->conditions);
+        $this->assertSame([], $this->resource()->loadByCodes([]));
+        $this->assertSame([], $this->resource()->loadByCodes(['', '0']));
+        $this->assertSame([], $this->conditions);
     }
 
     private function resource(): ThreadColor&MockObject

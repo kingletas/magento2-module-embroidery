@@ -57,17 +57,17 @@ class DeleteTest extends TestCase
     {
         $controller = $this->controller();
 
-        self::assertInstanceOf(HttpPostActionInterface::class, $controller);
-        self::assertNotInstanceOf(HttpGetActionInterface::class, $controller);
+        $this->assertInstanceOf(HttpPostActionInterface::class, $controller);
+        $this->assertNotInstanceOf(HttpGetActionInterface::class, $controller);
     }
 
     public function testADeletedLogoIsReportedAsSuccess(): void
     {
         $this->controller()->execute();
 
-        self::assertTrue($this->data['success']);
-        self::assertSame(['a1b2c3.png'], $this->deleteAttempts);
-        self::assertNull($this->status);
+        $this->assertTrue($this->data['success']);
+        $this->assertSame(['a1b2c3.png'], $this->deleteAttempts);
+        $this->assertNull($this->status);
     }
 
     /**
@@ -79,7 +79,7 @@ class DeleteTest extends TestCase
 
         $this->controller()->execute();
 
-        self::assertSame(['../../../app/etc/env.php'], $this->deleteAttempts);
+        $this->assertSame(['../../../app/etc/env.php'], $this->deleteAttempts);
     }
 
     /**
@@ -90,8 +90,8 @@ class DeleteTest extends TestCase
     {
         $this->controller()->execute();
 
-        self::assertSame(['success', 'message'], array_keys($this->data));
-        self::assertStringNotContainsString('/', (string) $this->data['message']);
+        $this->assertSame(['success', 'message'], array_keys($this->data));
+        $this->assertStringNotContainsString('/', (string) $this->data['message']);
     }
 
     /**
@@ -108,7 +108,7 @@ class DeleteTest extends TestCase
         $this->fileName = '../../../app/etc/env.php';
         $this->controller()->execute();
 
-        self::assertSame(
+        $this->assertSame(
             $missing,
             ['success' => $this->data['success'], 'message' => (string) $this->data['message']]
         );
@@ -124,8 +124,8 @@ class DeleteTest extends TestCase
 
         $this->controller()->execute();
 
-        self::assertFalse($this->data['success']);
-        self::assertSame([], $this->deleteAttempts);
+        $this->assertFalse($this->data['success']);
+        $this->assertSame([], $this->deleteAttempts);
     }
 
     public function testARejectedFormKeyIsForbiddenAndDeletesNothing(): void
@@ -135,17 +135,17 @@ class DeleteTest extends TestCase
 
         $this->controller()->execute();
 
-        self::assertSame(403, $this->status);
-        self::assertFalse($this->data['success']);
-        self::assertSame([], $this->deleteAttempts);
+        $this->assertSame(403, $this->status);
+        $this->assertFalse($this->data['success']);
+        $this->assertSame([], $this->deleteAttempts);
     }
 
     public function testADisabledFeatureIsNotFoundAndDeletesNothing(): void
     {
         $this->controller(enabled: false)->execute();
 
-        self::assertSame(404, $this->status);
-        self::assertSame([], $this->deleteAttempts);
+        $this->assertSame(404, $this->status);
+        $this->assertSame([], $this->deleteAttempts);
     }
 
     /**
@@ -155,7 +155,7 @@ class DeleteTest extends TestCase
     public function testADisabledFeatureIsRefusedWithoutValidatingAnything(): void
     {
         $this->formKeyValidator = $this->createMock(FormKeyValidator::class);
-        $this->formKeyValidator->expects(self::never())->method('validate');
+        $this->formKeyValidator->expects($this->never())->method('validate');
 
         $this->controller(enabled: false)->execute();
     }

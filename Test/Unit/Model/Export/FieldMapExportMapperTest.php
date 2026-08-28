@@ -20,7 +20,7 @@ use PHPUnit\Framework\TestCase;
 /**
  * The shape handed to whatever fulfils the embroidery.
  */
-final class FieldMapExportMapperTest extends TestCase
+class FieldMapExportMapperTest extends TestCase
 {
     private int $repositoryCalls = 0;
 
@@ -33,8 +33,8 @@ final class FieldMapExportMapperTest extends TestCase
     {
         $payload = $this->mapper()->map(new EmbroiderySelection(), new ChargeBreakdown());
 
-        self::assertSame(0.0, $payload['MonogramPrice']);
-        self::assertNull($payload['MonogramDetails']);
+        $this->assertSame(0.0, $payload['MonogramPrice']);
+        $this->assertNull($payload['MonogramDetails']);
     }
 
     public function testStaticFieldsAreAlwaysEmitted(): void
@@ -43,7 +43,7 @@ final class FieldMapExportMapperTest extends TestCase
 
         $payload = $mapper->map(new EmbroiderySelection(), new ChargeBreakdown());
 
-        self::assertSame(1.0, $payload['MonogramFlag']);
+        $this->assertSame(1.0, $payload['MonogramFlag']);
     }
 
     public function testTheTotalComesFromTheChargeBreakdown(): void
@@ -52,7 +52,7 @@ final class FieldMapExportMapperTest extends TestCase
 
         $payload = $this->mapper()->map($this->selection(), $charges);
 
-        self::assertSame(7.5, $payload['MonogramPrice']);
+        $this->assertSame(7.5, $payload['MonogramPrice']);
     }
 
     public function testTextLinesBecomeDetailEntriesWithTheirLineNumber(): void
@@ -61,9 +61,9 @@ final class FieldMapExportMapperTest extends TestCase
 
         $details = $this->mapper()->map($selection, new ChargeBreakdown())['MonogramDetails'];
 
-        self::assertSame('Left Chest Embroidered Text 1', $details['left_text_1']['label']);
-        self::assertSame('Dr Ada Lovelace', $details['left_text_1']['value']);
-        self::assertSame('Cardiology', $details['left_text_2']['value']);
+        $this->assertSame('Left Chest Embroidered Text 1', $details['left_text_1']['label']);
+        $this->assertSame('Dr Ada Lovelace', $details['left_text_1']['value']);
+        $this->assertSame('Cardiology', $details['left_text_2']['value']);
     }
 
     public function testAKnownThreadColourIsRenderedAsNameAndId(): void
@@ -73,7 +73,7 @@ final class FieldMapExportMapperTest extends TestCase
         $details = $this->mapper(['NVY' => $this->threadColor('Navy', 12)])
             ->map($selection, new ChargeBreakdown())['MonogramDetails'];
 
-        self::assertSame('Navy/12', $details['left_thread_color']['value']);
+        $this->assertSame('Navy/12', $details['left_thread_color']['value']);
     }
 
     /**
@@ -86,8 +86,8 @@ final class FieldMapExportMapperTest extends TestCase
 
         $details = $this->mapper()->map($selection, new ChargeBreakdown())['MonogramDetails'];
 
-        self::assertSame('GONE', $details['left_thread_color']['value']);
-        self::assertNotSame('', $details['left_thread_color']['value']);
+        $this->assertSame('GONE', $details['left_thread_color']['value']);
+        $this->assertNotSame('', $details['left_thread_color']['value']);
     }
 
     /**
@@ -103,14 +103,14 @@ final class FieldMapExportMapperTest extends TestCase
         $this->mapper(['NVY' => $this->threadColor('Navy', 12), 'RED' => $this->threadColor('Red', 13)])
             ->map($selection, new ChargeBreakdown());
 
-        self::assertSame(1, $this->repositoryCalls);
+        $this->assertSame(1, $this->repositoryCalls);
     }
 
     public function testASelectionWithNoThreadColourAsksTheRepositoryNothing(): void
     {
         $this->mapper()->map($this->selection(textLines: [1 => 'Ada']), new ChargeBreakdown());
 
-        self::assertSame(0, $this->repositoryCalls);
+        $this->assertSame(0, $this->repositoryCalls);
     }
 
     public function testBothChestsProduceTheirOwnSideFields(): void
@@ -122,10 +122,10 @@ final class FieldMapExportMapperTest extends TestCase
 
         $payload = $this->mapper()->map($selection, new ChargeBreakdown());
 
-        self::assertSame('Ada', $payload['MonogramDetails']['left_text_1']['value']);
-        self::assertSame('Grace', $payload['MonogramDetails']['right_text_1']['value']);
-        self::assertArrayHasKey('LeftLineOne', $payload);
-        self::assertArrayHasKey('RightLineOne', $payload);
+        $this->assertSame('Ada', $payload['MonogramDetails']['left_text_1']['value']);
+        $this->assertSame('Grace', $payload['MonogramDetails']['right_text_1']['value']);
+        $this->assertArrayHasKey('LeftLineOne', $payload);
+        $this->assertArrayHasKey('RightLineOne', $payload);
     }
 
     public function testALogoContributesItsTypeUploadAndLocation(): void
@@ -138,9 +138,9 @@ final class FieldMapExportMapperTest extends TestCase
 
         $details = $this->mapper()->map($selection, new ChargeBreakdown())['MonogramDetails'];
 
-        self::assertSame('custom', $details['left_logo_type']['value']);
-        self::assertSame('a1b2c3.png', $details['left_logo_upload']['value']);
-        self::assertSame('above text', $details['left_logo_location']['value']);
+        $this->assertSame('custom', $details['left_logo_type']['value']);
+        $this->assertSame('a1b2c3.png', $details['left_logo_upload']['value']);
+        $this->assertSame('above text', $details['left_logo_location']['value']);
     }
 
     public function testALogoPriceIsTheSumOfTheStockAndCustomComponents(): void
@@ -155,7 +155,7 @@ final class FieldMapExportMapperTest extends TestCase
             $charges
         );
 
-        self::assertSame(8.0, $payload['LeftLogoPrice']);
+        $this->assertSame(8.0, $payload['LeftLogoPrice']);
     }
 
     public function testAnAbsentTextLineIsPricedAtZeroRatherThanOmitted(): void
@@ -165,9 +165,9 @@ final class FieldMapExportMapperTest extends TestCase
             new ChargeBreakdown(['left_' . ChargeCalculator::COMPONENT_TEXT => 4.0])
         );
 
-        self::assertSame(4.0, $payload['LeftLineOne']);
-        self::assertSame(0.0, $payload['LeftLineTwo']);
-        self::assertSame(0.0, $payload['LeftLineThree']);
+        $this->assertSame(4.0, $payload['LeftLineOne']);
+        $this->assertSame(0.0, $payload['LeftLineTwo']);
+        $this->assertSame(0.0, $payload['LeftLineThree']);
     }
 
     /**
@@ -184,10 +184,10 @@ final class FieldMapExportMapperTest extends TestCase
 
         $payload = $mapper->map($this->selection(textLines: [1 => 'Ada']), new ChargeBreakdown());
 
-        self::assertArrayHasKey('EmbroideryTotal', $payload);
-        self::assertArrayHasKey('EmbroideryDetail', $payload);
-        self::assertArrayHasKey('Left_logo', $payload);
-        self::assertArrayHasKey('Left_l1', $payload);
+        $this->assertArrayHasKey('EmbroideryTotal', $payload);
+        $this->assertArrayHasKey('EmbroideryDetail', $payload);
+        $this->assertArrayHasKey('Left_logo', $payload);
+        $this->assertArrayHasKey('Left_l1', $payload);
     }
 
     private function selection(

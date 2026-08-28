@@ -22,7 +22,7 @@ use PHPUnit\Framework\TestCase;
 /**
  * What pricing a cart costs in configuration reads.
  */
-final class PricingCostTest extends TestCase
+class PricingCostTest extends TestCase
 {
     use BudgetAssertions;
 
@@ -31,7 +31,7 @@ final class PricingCostTest extends TestCase
 
     public function testPricingACartDoesNotReadConfigurationPerLine(): void
     {
-        self::assertConstantCost(
+        $this->assertConstantCost(
             'config reads while pricing a cart',
             function (int $lines): int {
                 [$calculator, $scopeConfig] = $this->calculator();
@@ -59,7 +59,7 @@ final class PricingCostTest extends TestCase
 
         $calculator->calculate($this->bothChests(), self::STORE);
 
-        self::assertCostAtMost(
+        $this->assertCostAtMost(
             'pricing a second identical line',
             $firstPass,
             $scopeConfig->reads(),
@@ -80,8 +80,8 @@ final class PricingCostTest extends TestCase
         $one = $calculator->calculate($this->oneLineOfText(), 1);
         $two = $calculator->calculate($this->oneLineOfText(), 2);
 
-        self::assertSame(2.5, $one->total, $scopeConfig->summary());
-        self::assertSame(9.0, $two->total, $scopeConfig->summary());
+        $this->assertSame(2.5, $one->total, $scopeConfig->summary());
+        $this->assertSame(9.0, $two->total, $scopeConfig->summary());
     }
 
     /**

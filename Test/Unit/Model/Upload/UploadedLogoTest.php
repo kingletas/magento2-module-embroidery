@@ -20,15 +20,15 @@ class UploadedLogoTest extends TestCase
     {
         $logo = new UploadedLogo('a1b2c3.png', 'embroidery/logo/a/1/a1b2c3.png');
 
-        self::assertSame('a1b2c3.png', $logo->fileName);
-        self::assertSame('embroidery/logo/a/1/a1b2c3.png', $logo->relativePath);
+        $this->assertSame('a1b2c3.png', $logo->fileName);
+        $this->assertSame('embroidery/logo/a/1/a1b2c3.png', $logo->relativePath);
     }
 
     public function testTheArrayFormIsWhatTheEndpointReturns(): void
     {
         $logo = new UploadedLogo('a1b2c3.png', 'embroidery/logo/a/1/a1b2c3.png');
 
-        self::assertSame(
+        $this->assertSame(
             ['file_name' => 'a1b2c3.png', 'path' => 'embroidery/logo/a/1/a1b2c3.png'],
             $logo->toArray()
         );
@@ -42,14 +42,14 @@ class UploadedLogoTest extends TestCase
     {
         $logo = new UploadedLogo('a1b2c3.png', 'embroidery/logo/a/1/a1b2c3.png');
 
-        self::assertSame(['file_name', 'path'], array_keys($logo->toArray()));
-        self::assertStringStartsNotWith('/', $logo->relativePath);
+        $this->assertSame(['file_name', 'path'], array_keys($logo->toArray()));
+        $this->assertStringStartsNotWith('/', $logo->relativePath);
     }
 
     public function testItIsImmutable(): void
     {
         foreach (['fileName', 'relativePath'] as $property) {
-            self::assertTrue(
+            $this->assertTrue(
                 (new ReflectionProperty(UploadedLogo::class, $property))->isReadOnly(),
                 sprintf('%s must be read-only.', $property)
             );

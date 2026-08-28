@@ -18,9 +18,9 @@ class SideSelectionTest extends TestCase
 {
     public function testRecognisesAnEmptySelection(): void
     {
-        self::assertTrue((new SideSelection(Side::Left))->isEmpty());
-        self::assertFalse((new SideSelection(Side::Left, [1 => 'x']))->isEmpty());
-        self::assertFalse(
+        $this->assertTrue((new SideSelection(Side::Left))->isEmpty());
+        $this->assertFalse((new SideSelection(Side::Left, [1 => 'x']))->isEmpty());
+        $this->assertFalse(
             (new SideSelection(Side::Left, [], null, null, SideSelection::LOGO_STOCK))->isEmpty()
         );
     }
@@ -29,8 +29,8 @@ class SideSelectionTest extends TestCase
     {
         $selection = new SideSelection(Side::Left, [1 => 'Jane Doe']);
 
-        self::assertTrue($selection->hasText());
-        self::assertFalse($selection->hasLogo());
+        $this->assertTrue($selection->hasText());
+        $this->assertFalse($selection->hasLogo());
     }
 
     /**
@@ -49,7 +49,7 @@ class SideSelectionTest extends TestCase
             'above'
         );
 
-        self::assertSame([
+        $this->assertSame([
             'side' => 'right',
             'text_lines' => [1 => 'Jane Doe'],
             'font_style' => 'script',

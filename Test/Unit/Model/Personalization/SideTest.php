@@ -17,12 +17,12 @@ class SideTest extends TestCase
 {
     public function testSideLabelsAreCapitalisedForExportFieldNames(): void
     {
-        self::assertSame('Left', Side::Left->label());
-        self::assertSame('Right', Side::Right->label());
+        $this->assertSame('Left', Side::Left->label());
+        $this->assertSame('Right', Side::Right->label());
     }
 
     public function testAllListsEverySide(): void
     {
-        self::assertSame([Side::Left, Side::Right], Side::cases());
+        $this->assertSame([Side::Left, Side::Right], Side::cases());
     }
 }

@@ -35,22 +35,22 @@ class SelectionReaderTest extends TestCase
 
     public function testAQuoteItemCarryingSelectionsIsRecognised(): void
     {
-        self::assertTrue($this->reader()->isEmbroidered($this->quoteItem($this->payload())));
-        self::assertFalse($this->reader()->isEmbroidered($this->quoteItem(null)));
+        $this->assertTrue($this->reader()->isEmbroidered($this->quoteItem($this->payload())));
+        $this->assertFalse($this->reader()->isEmbroidered($this->quoteItem(null)));
     }
 
     public function testASelectionIsReadBackFromAQuoteItem(): void
     {
         $selection = $this->reader()->fromQuoteItem($this->quoteItem($this->payload()));
 
-        self::assertInstanceOf(EmbroiderySelection::class, $selection);
-        self::assertFalse($selection->isEmpty());
-        self::assertNotNull($selection->get(Side::Left));
+        $this->assertInstanceOf(EmbroiderySelection::class, $selection);
+        $this->assertFalse($selection->isEmpty());
+        $this->assertNotNull($selection->get(Side::Left));
     }
 
     public function testAQuoteItemWithoutSelectionsReadsAsNothing(): void
     {
-        self::assertNull($this->reader()->fromQuoteItem($this->quoteItem(null)));
+        $this->assertNull($this->reader()->fromQuoteItem($this->quoteItem(null)));
     }
 
     /**
@@ -66,15 +66,15 @@ class SelectionReaderTest extends TestCase
             OptionCodeInterface::OPTIONS => (array) (new Json())->unserialize($this->payload()),
         ]));
 
-        self::assertInstanceOf(EmbroiderySelection::class, $asJson);
-        self::assertInstanceOf(EmbroiderySelection::class, $asArray);
-        self::assertEquals($asJson->toArray(), $asArray->toArray());
+        $this->assertInstanceOf(EmbroiderySelection::class, $asJson);
+        $this->assertInstanceOf(EmbroiderySelection::class, $asArray);
+        $this->assertEquals($asJson->toArray(), $asArray->toArray());
     }
 
     public function testAnOrderItemWithoutSelectionsReadsAsNothing(): void
     {
-        self::assertNull($this->reader()->fromOrderItem($this->orderItem([])));
-        self::assertNull($this->reader()->fromOrderItem($this->orderItem(null)));
+        $this->assertNull($this->reader()->fromOrderItem($this->orderItem([])));
+        $this->assertNull($this->reader()->fromOrderItem($this->orderItem(null)));
     }
 
     public function testEncodingProducesTheSelectionsOwnArrayForm(): void
@@ -84,9 +84,9 @@ class SelectionReaderTest extends TestCase
 
         $encoded = (array) (new Json())->unserialize($reader->encode($selection));
 
-        self::assertSame([Side::Left->value], array_keys($encoded));
-        self::assertSame([1 => 'A. Nurse', 2 => 'RN'], $encoded[Side::Left->value]['text_lines']);
-        self::assertSame('T-100', $encoded[Side::Left->value]['thread_color']);
+        $this->assertSame([Side::Left->value], array_keys($encoded));
+        $this->assertSame([1 => 'A. Nurse', 2 => 'RN'], $encoded[Side::Left->value]['text_lines']);
+        $this->assertSame('T-100', $encoded[Side::Left->value]['thread_color']);
     }
 
     /**
@@ -108,11 +108,11 @@ class SelectionReaderTest extends TestCase
 
         $readBack = $reader->fromQuoteItem($this->quoteItem($reader->encode($original)));
 
-        self::assertInstanceOf(EmbroiderySelection::class, $readBack);
-        self::assertSame([Side::Left->value, Side::Right->value], array_keys($readBack->toArray()));
-        self::assertSame([1 => 'A. Nurse', 3 => 'Cardiology'], $readBack->get(Side::Left)?->textLines);
-        self::assertSame([2 => 'St Jude'], $readBack->get(Side::Right)?->textLines);
-        self::assertEquals($original->toArray(), $readBack->toArray());
+        $this->assertInstanceOf(EmbroiderySelection::class, $readBack);
+        $this->assertSame([Side::Left->value, Side::Right->value], array_keys($readBack->toArray()));
+        $this->assertSame([1 => 'A. Nurse', 3 => 'Cardiology'], $readBack->get(Side::Left)?->textLines);
+        $this->assertSame([2 => 'St Jude'], $readBack->get(Side::Right)?->textLines);
+        $this->assertEquals($original->toArray(), $readBack->toArray());
     }
 
     /**
@@ -130,8 +130,8 @@ class SelectionReaderTest extends TestCase
             OptionCodeInterface::OPTIONS => $reader->encode($original),
         ]));
 
-        self::assertInstanceOf(EmbroiderySelection::class, $readBack);
-        self::assertSame([1 => 'A. Nurse'], $readBack->get(Side::Left)?->textLines);
+        $this->assertInstanceOf(EmbroiderySelection::class, $readBack);
+        $this->assertSame([1 => 'A. Nurse'], $readBack->get(Side::Left)?->textLines);
     }
 
     /**
@@ -139,9 +139,9 @@ class SelectionReaderTest extends TestCase
      */
     public function testACorruptPayloadIsLoggedAndReadsAsNothing(): void
     {
-        self::assertNull($this->reader()->fromQuoteItem($this->quoteItem('{not json')));
-        self::assertCount(1, $this->logger->warnings);
-        self::assertStringContainsString('decode', $this->logger->warnings[0]);
+        $this->assertNull($this->reader()->fromQuoteItem($this->quoteItem('{not json')));
+        $this->assertCount(1, $this->logger->warnings);
+        $this->assertStringContainsString('decode', $this->logger->warnings[0]);
     }
 
     /**
@@ -150,8 +150,8 @@ class SelectionReaderTest extends TestCase
      */
     public function testAnEmptyPayloadIsNotTreatedAsCorruption(): void
     {
-        self::assertNull($this->reader()->fromQuoteItem($this->quoteItem('   ')));
-        self::assertSame([], $this->logger->warnings);
+        $this->assertNull($this->reader()->fromQuoteItem($this->quoteItem('   ')));
+        $this->assertSame([], $this->logger->warnings);
     }
 
     /**
@@ -160,7 +160,7 @@ class SelectionReaderTest extends TestCase
      */
     public function testAPayloadThatIsNotAnObjectReadsAsNothing(): void
     {
-        self::assertNull($this->reader()->fromQuoteItem($this->quoteItem('"front"')));
+        $this->assertNull($this->reader()->fromQuoteItem($this->quoteItem('"front"')));
     }
 
     private function payload(): string

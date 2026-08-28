@@ -29,27 +29,27 @@ class ConfigTest extends TestCase
             'acme_embroidery'
         );
 
-        self::assertTrue($config->isEnabled());
-        self::assertSame(4.5, $config->getStockLogoPrice());
+        $this->assertTrue($config->isEnabled());
+        $this->assertSame(4.5, $config->getStockLogoPrice());
     }
 
     public function testAnUnconfiguredStoreHasTheFeatureOff(): void
     {
-        self::assertFalse($this->config([])->isEnabled());
+        $this->assertFalse($this->config([])->isEnabled());
     }
 
     public function testTheDisabledFlagIsReadAsAFlagRatherThanForTruthiness(): void
     {
-        self::assertFalse($this->config(['general/enabled' => '0'])->isEnabled());
+        $this->assertFalse($this->config(['general/enabled' => '0'])->isEnabled());
     }
 
     public function testTheCmsBlockAndMessageSettingsDefaultToEmpty(): void
     {
         $config = $this->config([]);
 
-        self::assertSame('', $config->getTermsCmsBlockId());
-        self::assertSame('', $config->getUploadInfoCmsBlockId());
-        self::assertSame('', $config->getUploadSizeMessage());
+        $this->assertSame('', $config->getTermsCmsBlockId());
+        $this->assertSame('', $config->getUploadInfoCmsBlockId());
+        $this->assertSame('', $config->getUploadSizeMessage());
     }
 
     public function testTheCmsBlockAndMessageSettingsAreReadWhenSet(): void
@@ -60,9 +60,9 @@ class ConfigTest extends TestCase
             'general/upload_size_message' => 'Up to 2 MB.',
         ]);
 
-        self::assertSame('embroidery_terms', $config->getTermsCmsBlockId());
-        self::assertSame('embroidery_upload_info', $config->getUploadInfoCmsBlockId());
-        self::assertSame('Up to 2 MB.', $config->getUploadSizeMessage());
+        $this->assertSame('embroidery_terms', $config->getTermsCmsBlockId());
+        $this->assertSame('embroidery_upload_info', $config->getUploadInfoCmsBlockId());
+        $this->assertSame('Up to 2 MB.', $config->getUploadSizeMessage());
     }
 
     /**
@@ -76,8 +76,8 @@ class ConfigTest extends TestCase
             'charges/text_line_2_price' => '2.00',
         ]);
 
-        self::assertSame(3.0, $config->getTextLinePrice(1));
-        self::assertSame(2.0, $config->getTextLinePrice(2));
+        $this->assertSame(3.0, $config->getTextLinePrice(1));
+        $this->assertSame(2.0, $config->getTextLinePrice(2));
     }
 
     /**
@@ -86,7 +86,7 @@ class ConfigTest extends TestCase
      */
     public function testAnUnpricedTextLineCostsNothing(): void
     {
-        self::assertSame(0.0, $this->config([])->getTextLinePrice(3));
+        $this->assertSame(0.0, $this->config([])->getTextLinePrice(3));
     }
 
     /**
@@ -100,24 +100,24 @@ class ConfigTest extends TestCase
             'charges/custom_logo_fee' => '25.00',
         ]);
 
-        self::assertSame(4.5, $config->getStockLogoPrice());
-        self::assertSame(7.25, $config->getCustomLogoPrice());
-        self::assertSame(25.0, $config->getCustomLogoFee());
+        $this->assertSame(4.5, $config->getStockLogoPrice());
+        $this->assertSame(7.25, $config->getCustomLogoPrice());
+        $this->assertSame(25.0, $config->getCustomLogoFee());
     }
 
     public function testUnconfiguredChargesAreFree(): void
     {
         $config = $this->config([]);
 
-        self::assertSame(0.0, $config->getStockLogoPrice());
-        self::assertSame(0.0, $config->getCustomLogoPrice());
-        self::assertSame(0.0, $config->getCustomLogoFee());
+        $this->assertSame(0.0, $config->getStockLogoPrice());
+        $this->assertSame(0.0, $config->getCustomLogoPrice());
+        $this->assertSame(0.0, $config->getCustomLogoFee());
     }
 
     public function testNotificationIsOffUntilItIsSwitchedOn(): void
     {
-        self::assertFalse($this->config([])->isNotificationEnabled());
-        self::assertTrue($this->config(['notification/enabled' => '1'])->isNotificationEnabled());
+        $this->assertFalse($this->config([])->isNotificationEnabled());
+        $this->assertTrue($this->config(['notification/enabled' => '1'])->isNotificationEnabled());
     }
 
     /**
@@ -128,8 +128,8 @@ class ConfigTest extends TestCase
     {
         $config = $this->config([]);
 
-        self::assertSame('commerce_embroidery_order', $config->getNotificationTemplate());
-        self::assertSame('general', $config->getSenderIdentity());
+        $this->assertSame('commerce_embroidery_order', $config->getNotificationTemplate());
+        $this->assertSame('general', $config->getSenderIdentity());
     }
 
     public function testTheTemplateAndSenderAreConfigurable(): void
@@ -139,8 +139,8 @@ class ConfigTest extends TestCase
             'notification/sender_identity' => 'sales',
         ]);
 
-        self::assertSame('acme_embroidery_order', $config->getNotificationTemplate());
-        self::assertSame('sales', $config->getSenderIdentity());
+        $this->assertSame('acme_embroidery_order', $config->getNotificationTemplate());
+        $this->assertSame('sales', $config->getSenderIdentity());
     }
 
     /**
@@ -153,7 +153,7 @@ class ConfigTest extends TestCase
             'notification/recipients' => 'a@example.test, b@example.test ,,  c@example.test ',
         ]);
 
-        self::assertSame(
+        $this->assertSame(
             ['a@example.test', 'b@example.test', 'c@example.test'],
             $config->getNotificationRecipients()
         );
@@ -161,13 +161,13 @@ class ConfigTest extends TestCase
 
     public function testNoRecipientsIsAnEmptyListRatherThanAListWithAnEmptyEntry(): void
     {
-        self::assertSame([], $this->config([])->getNotificationRecipients());
-        self::assertSame([], $this->config(['notification/recipients' => ' , '])->getNotificationRecipients());
+        $this->assertSame([], $this->config([])->getNotificationRecipients());
+        $this->assertSame([], $this->config(['notification/recipients' => ' , '])->getNotificationRecipients());
     }
 
     public function testTheStoreScopeIsPassedThrough(): void
     {
-        self::assertSame(4.5, $this->config(['charges/stock_logo_price' => '4.50'])->getStockLogoPrice(2));
+        $this->assertSame(4.5, $this->config(['charges/stock_logo_price' => '4.50'])->getStockLogoPrice(2));
     }
 
     /**

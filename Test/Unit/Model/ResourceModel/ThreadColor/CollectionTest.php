@@ -28,8 +28,8 @@ class CollectionTest extends TestCase
     {
         $collection = $this->collection();
 
-        self::assertSame(ThreadColor::class, $collection->getModelName());
-        self::assertSame(ThreadColorResource::class, $collection->getResourceModelName());
+        $this->assertSame(ThreadColor::class, $collection->getModelName());
+        $this->assertSame(ThreadColorResource::class, $collection->getResourceModelName());
     }
 
     /**
@@ -37,12 +37,12 @@ class CollectionTest extends TestCase
      */
     public function testTheIdFieldIsSetThroughTheSetter(): void
     {
-        self::assertSame(ThreadColorInterface::THREAD_COLOR_ID, $this->collection()->getIdFieldName());
+        $this->assertSame(ThreadColorInterface::THREAD_COLOR_ID, $this->collection()->getIdFieldName());
     }
 
     public function testTheIdFieldIsNotTheFrameworkDefault(): void
     {
-        self::assertNotSame('id', $this->collection()->getIdFieldName());
+        $this->assertNotSame('id', $this->collection()->getIdFieldName());
     }
 
     /**
@@ -52,11 +52,11 @@ class CollectionTest extends TestCase
     public function testTheActiveScopeFiltersOnTheActiveFlag(): void
     {
         $collection = $this->partialCollection(['addFieldToFilter']);
-        $collection->expects(self::once())
+        $collection->expects($this->once())
             ->method('addFieldToFilter')
             ->with(ThreadColorInterface::IS_ACTIVE, 1);
 
-        self::assertSame($collection, $collection->addActiveFilter());
+        $this->assertSame($collection, $collection->addActiveFilter());
     }
 
     /**
@@ -75,8 +75,8 @@ class CollectionTest extends TestCase
             }
         );
 
-        self::assertSame($collection, $collection->addDefaultOrder());
-        self::assertSame(
+        $this->assertSame($collection, $collection->addDefaultOrder());
+        $this->assertSame(
             [
                 [ThreadColorInterface::SORT_ORDER, Collection::SORT_ORDER_ASC],
                 [ThreadColorInterface::NAME, Collection::SORT_ORDER_ASC],

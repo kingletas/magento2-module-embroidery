@@ -48,17 +48,17 @@ class IndexTest extends TestCase
      */
     public function testItOnlyAnswersGets(): void
     {
-        self::assertInstanceOf(HttpGetActionInterface::class, $this->controller());
+        $this->assertInstanceOf(HttpGetActionInterface::class, $this->controller());
     }
 
     public function testThePayloadIsTheFormOptionsPlusAnEnabledFlag(): void
     {
         $this->controller()->execute();
 
-        self::assertTrue($this->data['enabled']);
-        self::assertArrayHasKey('thread_colors', $this->data);
-        self::assertArrayHasKey('prices', $this->data);
-        self::assertNull($this->status);
+        $this->assertTrue($this->data['enabled']);
+        $this->assertArrayHasKey('thread_colors', $this->data);
+        $this->assertArrayHasKey('prices', $this->data);
+        $this->assertNull($this->status);
     }
 
     /**
@@ -70,7 +70,7 @@ class IndexTest extends TestCase
 
         $this->controller()->execute();
 
-        self::assertSame([2], $this->requestedScopes);
+        $this->assertSame([2], $this->requestedScopes);
     }
 
     /**
@@ -86,8 +86,8 @@ class IndexTest extends TestCase
 
         $this->controller()->execute();
 
-        self::assertSame([0], $this->requestedScopes);
-        self::assertTrue($this->data['enabled']);
+        $this->assertSame([0], $this->requestedScopes);
+        $this->assertTrue($this->data['enabled']);
     }
 
     /**
@@ -97,8 +97,8 @@ class IndexTest extends TestCase
     {
         $this->controller(enabled: false)->execute();
 
-        self::assertSame(404, $this->status);
-        self::assertSame(['enabled' => false], $this->data);
+        $this->assertSame(404, $this->status);
+        $this->assertSame(['enabled' => false], $this->data);
     }
 
     /**
@@ -112,7 +112,7 @@ class IndexTest extends TestCase
 
         $this->controller(provider: $provider)->execute();
 
-        self::assertTrue($this->data['enabled']);
+        $this->assertTrue($this->data['enabled']);
     }
 
     private function controller(bool $enabled = true, ?OptionsProvider $provider = null): Index

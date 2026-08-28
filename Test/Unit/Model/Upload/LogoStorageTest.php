@@ -73,9 +73,9 @@ class LogoStorageTest extends TestCase
     #[DataProvider('traversalProvider')]
     public function testRefusesToDeleteAnythingOutsideTheUploadDirectory(string $fileName): void
     {
-        $this->mediaDirectory->expects(self::never())->method('delete');
+        $this->mediaDirectory->expects($this->never())->method('delete');
 
-        self::assertFalse($this->storage->delete($fileName));
+        $this->assertFalse($this->storage->delete($fileName));
     }
 
     /**
@@ -104,20 +104,20 @@ class LogoStorageTest extends TestCase
 
         $this->mediaDirectory->method('isExist')->willReturn(true);
         $this->mediaDirectory->method('isFile')->willReturn(true);
-        $this->mediaDirectory->expects(self::once())
+        $this->mediaDirectory->expects($this->once())
             ->method('delete')
             ->with('embroidery/' . $name)
             ->willReturn(true);
 
-        self::assertTrue($this->storage->delete($name));
+        $this->assertTrue($this->storage->delete($name));
     }
 
     public function testDeletingAMissingFileReportsFalseRatherThanRaising(): void
     {
         $this->mediaDirectory->method('isExist')->willReturn(false);
-        $this->mediaDirectory->expects(self::never())->method('delete');
+        $this->mediaDirectory->expects($this->never())->method('delete');
 
-        self::assertFalse($this->storage->delete(str_repeat('b2', 16) . '.png'));
+        $this->assertFalse($this->storage->delete(str_repeat('b2', 16) . '.png'));
     }
 
     /**
@@ -128,7 +128,7 @@ class LogoStorageTest extends TestCase
     {
         $this->mediaDirectory->method('isExist')->willReturn(false);
 
-        self::assertSame(
+        $this->assertSame(
             $this->storage->delete('../../../etc/passwd'),
             $this->storage->delete(str_repeat('c3', 16) . '.jpg')
         );
@@ -136,7 +136,7 @@ class LogoStorageTest extends TestCase
 
     public function testAnUnacceptableNameIsLoggedForInvestigation(): void
     {
-        $this->logger->expects(self::once())->method('warning');
+        $this->logger->expects($this->once())->method('warning');
 
         $this->storage->delete('../../../app/etc/env.php');
     }
@@ -145,8 +145,8 @@ class LogoStorageTest extends TestCase
     {
         $this->mediaDirectory->method('isExist')->willReturn(true);
 
-        self::assertFalse($this->storage->exists('../../../app/etc/env.php'));
-        self::assertTrue($this->storage->exists(str_repeat('d4', 16) . '.jpeg'));
+        $this->assertFalse($this->storage->exists('../../../app/etc/env.php'));
+        $this->assertTrue($this->storage->exists(str_repeat('d4', 16) . '.jpeg'));
     }
     /**
      * The extension allow-list is not the content check.
@@ -162,7 +162,7 @@ class LogoStorageTest extends TestCase
 
     public function testARealImageIsAccepted(): void
     {
-        $this->imageValidator->expects(self::once())
+        $this->imageValidator->expects($this->once())
             ->method('isValid')
             ->with('/tmp/php-upload')
             ->willReturn(true);
@@ -178,8 +178,8 @@ class LogoStorageTest extends TestCase
     public function testEveryRegisteredValidateCallbackIsActuallyCallable(): void
     {
         foreach (['validateIsImage', 'validateSize'] as $method) {
-            self::assertTrue(method_exists($this->storage, $method), $method . ' is registered but missing');
-            self::assertTrue(is_callable([$this->storage, $method]), $method . ' is not callable');
+            $this->assertTrue(method_exists($this->storage, $method), $method . ' is registered but missing');
+            $this->assertTrue(is_callable([$this->storage, $method]), $method . ' is not callable');
         }
     }
 }

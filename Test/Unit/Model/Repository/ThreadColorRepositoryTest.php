@@ -80,7 +80,7 @@ class ThreadColorRepositoryTest extends TestCase
 
     public function testAColourIsLoadedById(): void
     {
-        self::assertSame(3, $this->repository()->getById(3)->getThreadColorId());
+        $this->assertSame(3, $this->repository()->getById(3)->getThreadColorId());
     }
 
     public function testAnUnknownIdIsNoSuchEntity(): void
@@ -92,7 +92,7 @@ class ThreadColorRepositoryTest extends TestCase
 
     public function testAColourIsLoadedByItsCode(): void
     {
-        self::assertSame('Ceil Blue', $this->repository()->getByCode('T-100')->getName());
+        $this->assertSame('Ceil Blue', $this->repository()->getByCode('T-100')->getName());
     }
 
     public function testAnUnknownCodeIsNoSuchEntity(): void
@@ -106,8 +106,8 @@ class ThreadColorRepositoryTest extends TestCase
     {
         $found = $this->repository()->getByCodes(['T-100', 'T-101']);
 
-        self::assertSame(['T-100', 'T-101'], array_keys($found));
-        self::assertCount(1, $this->codeLookups);
+        $this->assertSame(['T-100', 'T-101'], array_keys($found));
+        $this->assertCount(1, $this->codeLookups);
     }
 
     /**
@@ -121,8 +121,8 @@ class ThreadColorRepositoryTest extends TestCase
         $first = $repository->getByCodes(['T-100']);
         $second = $repository->getByCodes(['T-100']);
 
-        self::assertSame($first['T-100'], $second['T-100']);
-        self::assertCount(1, $this->codeLookups);
+        $this->assertSame($first['T-100'], $second['T-100']);
+        $this->assertCount(1, $this->codeLookups);
     }
 
     /**
@@ -136,8 +136,8 @@ class ThreadColorRepositoryTest extends TestCase
         $repository->getByCodes(['T-100']);
         $found = $repository->getByCodes(['T-100', 'T-101']);
 
-        self::assertSame(['T-101'], $this->codeLookups[1]);
-        self::assertSame(['T-100', 'T-101'], array_keys($found));
+        $this->assertSame(['T-101'], $this->codeLookups[1]);
+        $this->assertSame(['T-100', 'T-101'], array_keys($found));
     }
 
     /**
@@ -146,7 +146,7 @@ class ThreadColorRepositoryTest extends TestCase
      */
     public function testAnUnknownCodeIsOmittedRatherThanReturnedEmpty(): void
     {
-        self::assertSame(['T-100'], array_keys($this->repository()->getByCodes(['T-100', 'T-999'])));
+        $this->assertSame(['T-100'], array_keys($this->repository()->getByCodes(['T-100', 'T-999'])));
     }
 
     /**
@@ -157,16 +157,16 @@ class ThreadColorRepositoryTest extends TestCase
     {
         $repository = $this->repository();
 
-        self::assertSame([], $repository->getByCodes([]));
-        self::assertSame([], $repository->getByCodes(['', '   ']));
-        self::assertSame([], $this->codeLookups);
+        $this->assertSame([], $repository->getByCodes([]));
+        $this->assertSame([], $repository->getByCodes(['', '   ']));
+        $this->assertSame([], $this->codeLookups);
     }
 
     public function testCodesAreTrimmedAndDeduplicatedBeforeQuerying(): void
     {
         $this->repository()->getByCodes([' T-100 ', 'T-100', 'T-101']);
 
-        self::assertSame(['T-100', 'T-101'], $this->codeLookups[0]);
+        $this->assertSame(['T-100', 'T-101'], $this->codeLookups[0]);
     }
 
     /**
@@ -181,7 +181,7 @@ class ThreadColorRepositoryTest extends TestCase
         $repository->getActive();
         $repository->getActive();
 
-        self::assertSame(1, $this->collectionsBuilt);
+        $this->assertSame(1, $this->collectionsBuilt);
     }
 
     /**
@@ -196,14 +196,14 @@ class ThreadColorRepositoryTest extends TestCase
         $repository->getActive();
         $repository->getByCodes(['T-100']);
 
-        self::assertSame([], $this->codeLookups);
+        $this->assertSame([], $this->codeLookups);
     }
 
     public function testSavingReturnsTheColourItPersisted(): void
     {
         $entity = $this->entity();
 
-        self::assertSame($entity, $this->repository()->save($entity));
+        $this->assertSame($entity, $this->repository()->save($entity));
     }
 
     /**
@@ -241,7 +241,7 @@ class ThreadColorRepositoryTest extends TestCase
         $repository->save($this->entity());
         $repository->getByCodes(['T-100']);
 
-        self::assertCount(2, $this->codeLookups);
+        $this->assertCount(2, $this->codeLookups);
     }
 
     public function testADeleteForgetsTheMemoisedActiveList(): void
@@ -253,14 +253,14 @@ class ThreadColorRepositoryTest extends TestCase
         $repository->delete($this->entity());
         $repository->getActive();
 
-        self::assertSame(2, $this->collectionsBuilt);
+        $this->assertSame(2, $this->collectionsBuilt);
     }
 
     public function testDeletingByIdLoadsTheRowFirst(): void
     {
         $this->repository()->deleteById(3);
 
-        self::assertSame([3], $this->idLoads);
+        $this->assertSame([3], $this->idLoads);
     }
 
     /**
@@ -278,9 +278,9 @@ class ThreadColorRepositoryTest extends TestCase
     {
         $results = $this->createMock(ThreadColorSearchResultsInterface::class);
         $builder = $this->createMock(SearchResultBuilder::class);
-        $builder->expects(self::once())->method('build')->willReturn($results);
+        $builder->expects($this->once())->method('build')->willReturn($results);
 
-        self::assertSame(
+        $this->assertSame(
             $results,
             $this->repository($builder)->getList($this->createMock(SearchCriteriaInterface::class))
         );

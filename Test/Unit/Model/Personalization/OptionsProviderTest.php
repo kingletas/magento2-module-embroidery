@@ -38,7 +38,7 @@ class OptionsProviderTest extends TestCase
      */
     public function testTheThreadColoursComeFromTheRepositoryRatherThanConfiguration(): void
     {
-        self::assertSame(
+        $this->assertSame(
             [
                 ['value' => 'T-100', 'label' => 'Ceil Blue', 'hex' => '#7FA8D4'],
                 ['value' => 'T-101', 'label' => 'Navy', 'hex' => '#1B2A4A'],
@@ -54,10 +54,10 @@ class OptionsProviderTest extends TestCase
     public function testOnlyActiveColoursAreOffered(): void
     {
         $repository = $this->createMock(ThreadColorRepositoryInterface::class);
-        $repository->expects(self::once())->method('getActive')->willReturn([]);
-        $repository->expects(self::never())->method('getList');
+        $repository->expects($this->once())->method('getActive')->willReturn([]);
+        $repository->expects($this->never())->method('getList');
 
-        self::assertSame([], $this->provider(repository: $repository)->getThreadColorOptions());
+        $this->assertSame([], $this->provider(repository: $repository)->getThreadColorOptions());
     }
 
     /**
@@ -71,12 +71,12 @@ class OptionsProviderTest extends TestCase
             logoTypes: ['stock' => 'Stock logo', 'custom' => 'Custom logo'],
         )->getFormOptions();
 
-        self::assertSame(
+        $this->assertSame(
             [['value' => 'block', 'label' => 'Block'], ['value' => 'script', 'label' => 'Script']],
             $options['font_styles']
         );
-        self::assertSame([['value' => 'left_chest', 'label' => 'Left chest']], $options['logo_locations']);
-        self::assertCount(2, $options['logo_types']);
+        $this->assertSame([['value' => 'left_chest', 'label' => 'Left chest']], $options['logo_locations']);
+        $this->assertCount(2, $options['logo_types']);
     }
 
     /**
@@ -87,9 +87,9 @@ class OptionsProviderTest extends TestCase
     {
         $options = $this->provider()->getFormOptions();
 
-        self::assertSame([], $options['font_styles']);
-        self::assertSame([], $options['logo_locations']);
-        self::assertSame([], $options['logo_types']);
+        $this->assertSame([], $options['font_styles']);
+        $this->assertSame([], $options['logo_locations']);
+        $this->assertSame([], $options['logo_types']);
     }
 
     /**
@@ -99,12 +99,12 @@ class OptionsProviderTest extends TestCase
     {
         $sides = $this->provider()->getFormOptions()['sides'];
 
-        self::assertCount(count(Side::cases()), $sides);
-        self::assertSame(
+        $this->assertCount(count(Side::cases()), $sides);
+        $this->assertSame(
             array_map(static fn (Side $s): string => $s->value, Side::cases()),
             array_column($sides, 'value')
         );
-        self::assertNotContains('', array_column($sides, 'label'));
+        $this->assertNotContains('', array_column($sides, 'label'));
     }
 
     /**
@@ -122,7 +122,7 @@ class OptionsProviderTest extends TestCase
             'charges/custom_logo_fee' => '25.00',
         ])->getFormOptions()['prices'];
 
-        self::assertSame(
+        $this->assertSame(
             [
                 'text_line_1' => 3.0,
                 'text_line_2' => 2.0,
@@ -144,12 +144,12 @@ class OptionsProviderTest extends TestCase
         $prices = $this->provider(config: ['charges/stock_logo_price' => '4.50'])
             ->getFormOptions(2)['prices'];
 
-        self::assertSame(4.5, $prices['stock_logo']);
+        $this->assertSame(4.5, $prices['stock_logo']);
     }
 
     public function testThePayloadCarriesEverySectionTheFormNeeds(): void
     {
-        self::assertSame(
+        $this->assertSame(
             ['sides', 'font_styles', 'logo_locations', 'logo_types', 'thread_colors', 'prices'],
             array_keys($this->provider()->getFormOptions())
         );

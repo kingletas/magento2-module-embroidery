@@ -70,18 +70,18 @@ class UploadTest extends TestCase
     {
         $controller = $this->controller();
 
-        self::assertInstanceOf(HttpPostActionInterface::class, $controller);
-        self::assertNotInstanceOf(HttpGetActionInterface::class, $controller);
+        $this->assertInstanceOf(HttpPostActionInterface::class, $controller);
+        $this->assertNotInstanceOf(HttpGetActionInterface::class, $controller);
     }
 
     public function testAStoredLogoIsReportedUnderItsSide(): void
     {
         $this->controller()->execute();
 
-        self::assertTrue($this->data['success']);
-        self::assertSame(['left'], array_keys($this->data['uploaded']));
-        self::assertSame('a1b2c3.png', $this->data['uploaded']['left']['file_name']);
-        self::assertSame([], $this->data['errors']);
+        $this->assertTrue($this->data['success']);
+        $this->assertSame(['left'], array_keys($this->data['uploaded']));
+        $this->assertSame('a1b2c3.png', $this->data['uploaded']['left']['file_name']);
+        $this->assertSame([], $this->data['errors']);
     }
 
     public function testBothSidesCanBeUploadedInOneRequest(): void
@@ -90,8 +90,8 @@ class UploadTest extends TestCase
 
         $this->controller()->execute();
 
-        self::assertSame(['left', 'right'], array_keys($this->data['uploaded']));
-        self::assertSame([self::LEFT_KEY, self::RIGHT_KEY], $this->stored);
+        $this->assertSame(['left', 'right'], array_keys($this->data['uploaded']));
+        $this->assertSame([self::LEFT_KEY, self::RIGHT_KEY], $this->stored);
     }
 
     /**
@@ -104,10 +104,10 @@ class UploadTest extends TestCase
 
         $this->controller()->execute();
 
-        self::assertFalse($this->data['success']);
-        self::assertSame(['left'], array_keys($this->data['uploaded']));
-        self::assertSame(['right'], array_keys($this->data['errors']));
-        self::assertSame('That file is too large.', (string) $this->data['errors']['right']);
+        $this->assertFalse($this->data['success']);
+        $this->assertSame(['left'], array_keys($this->data['uploaded']));
+        $this->assertSame(['right'], array_keys($this->data['errors']));
+        $this->assertSame('That file is too large.', (string) $this->data['errors']['right']);
     }
 
     /**
@@ -119,8 +119,8 @@ class UploadTest extends TestCase
 
         $this->controller()->execute();
 
-        self::assertSame('Only PNG and JPEG are accepted.', (string) $this->data['errors']['left']);
-        self::assertSame([], $this->logger->errors);
+        $this->assertSame('Only PNG and JPEG are accepted.', (string) $this->data['errors']['left']);
+        $this->assertSame([], $this->logger->errors);
     }
 
     /**
@@ -133,8 +133,8 @@ class UploadTest extends TestCase
 
         $this->controller()->execute();
 
-        self::assertStringNotContainsString('/var/www', (string) $this->data['errors']['left']);
-        self::assertCount(1, $this->logger->errors);
+        $this->assertStringNotContainsString('/var/www', (string) $this->data['errors']['left']);
+        $this->assertCount(1, $this->logger->errors);
     }
 
     /**
@@ -147,8 +147,8 @@ class UploadTest extends TestCase
 
         $this->controller()->execute();
 
-        self::assertSame(400, $this->status);
-        self::assertFalse($this->data['success']);
+        $this->assertSame(400, $this->status);
+        $this->assertFalse($this->data['success']);
     }
 
     /**
@@ -161,8 +161,8 @@ class UploadTest extends TestCase
 
         $this->controller()->execute();
 
-        self::assertSame(400, $this->status);
-        self::assertSame([], $this->stored);
+        $this->assertSame(400, $this->status);
+        $this->assertSame([], $this->stored);
     }
 
     public function testARejectedFormKeyIsForbiddenAndStoresNothing(): void
@@ -172,22 +172,22 @@ class UploadTest extends TestCase
 
         $this->controller()->execute();
 
-        self::assertSame(403, $this->status);
-        self::assertSame([], $this->stored);
+        $this->assertSame(403, $this->status);
+        $this->assertSame([], $this->stored);
     }
 
     public function testADisabledFeatureIsNotFoundAndStoresNothing(): void
     {
         $this->controller(enabled: false)->execute();
 
-        self::assertSame(404, $this->status);
-        self::assertSame([], $this->stored);
+        $this->assertSame(404, $this->status);
+        $this->assertSame([], $this->stored);
     }
 
     public function testADisabledFeatureIsRefusedWithoutValidatingAnything(): void
     {
         $this->formKeyValidator = $this->createMock(FormKeyValidator::class);
-        $this->formKeyValidator->expects(self::never())->method('validate');
+        $this->formKeyValidator->expects($this->never())->method('validate');
 
         $this->controller(enabled: false)->execute();
     }

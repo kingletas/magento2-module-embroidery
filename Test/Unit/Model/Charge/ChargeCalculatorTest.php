@@ -42,8 +42,8 @@ class ChargeCalculatorTest extends TestCase
     {
         $charges = $this->calculator->calculate(new EmbroiderySelection([]));
 
-        self::assertSame(0.0, $charges->total);
-        self::assertTrue($charges->isZero());
+        $this->assertSame(0.0, $charges->total);
+        $this->assertTrue($charges->isZero());
     }
 
     public function testEachTextLineIsPricedAtItsOwnRate(): void
@@ -52,7 +52,7 @@ class ChargeCalculatorTest extends TestCase
             new SideSelection(Side::Left, [1 => 'Jane Doe', 2 => 'RN']),
         ]));
 
-        self::assertSame(9.00, $charges->total);
+        $this->assertSame(9.00, $charges->total);
     }
 
     /**
@@ -65,7 +65,7 @@ class ChargeCalculatorTest extends TestCase
             new SideSelection(Side::Left, [1 => 'Jane Doe', 3 => 'Cardiology']),
         ]));
 
-        self::assertSame(8.00, $charges->total, 'Should be line 1 (5.00) + line 3 (3.00), not line 2.');
+        $this->assertSame(8.00, $charges->total, 'Should be line 1 (5.00) + line 3 (3.00), not line 2.');
     }
 
     public function testStockAndCustomLogosArePricedDifferently(): void
@@ -73,12 +73,12 @@ class ChargeCalculatorTest extends TestCase
         $stock = $this->calculator->calculate(new EmbroiderySelection([
             new SideSelection(Side::Left, [], null, null, SideSelection::LOGO_STOCK),
         ]));
-        self::assertSame(8.00, $stock->total);
+        $this->assertSame(8.00, $stock->total);
 
         $custom = $this->calculator->calculate(new EmbroiderySelection([
             new SideSelection(Side::Left, [], null, null, SideSelection::LOGO_CUSTOM),
         ]));
-        self::assertSame(37.00, $custom->total, 'Custom logo 12.00 plus the 25.00 setup fee.');
+        $this->assertSame(37.00, $custom->total, 'Custom logo 12.00 plus the 25.00 setup fee.');
     }
 
     /**
@@ -92,8 +92,8 @@ class ChargeCalculatorTest extends TestCase
         ]));
 
         // 12.00 + 12.00 for the two logos, plus one 25.00 fee.
-        self::assertSame(49.00, $charges->total);
-        self::assertSame(25.00, $charges->get(ChargeCalculator::COMPONENT_CUSTOM_LOGO_FEE));
+        $this->assertSame(49.00, $charges->total);
+        $this->assertSame(25.00, $charges->get(ChargeCalculator::COMPONENT_CUSTOM_LOGO_FEE));
     }
 
     public function testBothSidesAreChargedIndependently(): void
@@ -103,9 +103,9 @@ class ChargeCalculatorTest extends TestCase
             new SideSelection(Side::Right, [1 => 'Doe']),
         ]));
 
-        self::assertSame(10.00, $charges->total);
-        self::assertSame(5.00, $charges->get('left_' . ChargeCalculator::COMPONENT_TEXT));
-        self::assertSame(5.00, $charges->get('right_' . ChargeCalculator::COMPONENT_TEXT));
+        $this->assertSame(10.00, $charges->total);
+        $this->assertSame(5.00, $charges->get('left_' . ChargeCalculator::COMPONENT_TEXT));
+        $this->assertSame(5.00, $charges->get('right_' . ChargeCalculator::COMPONENT_TEXT));
     }
 
     /**
@@ -119,7 +119,7 @@ class ChargeCalculatorTest extends TestCase
             new SideSelection(Side::Right),
         ]);
 
-        self::assertCount(1, $selection->all());
-        self::assertNull($selection->get(Side::Right));
+        $this->assertCount(1, $selection->all());
+        $this->assertNull($selection->get(Side::Right));
     }
 }

@@ -32,7 +32,7 @@ class FlagOrderWithEmbroideryTest extends TestCase
             $this->item([OptionCodeInterface::OPTIONS => '{"sides":[]}']),
         ]));
 
-        self::assertSame(1, $this->written[FlagOrderWithEmbroidery::ATTRIBUTE]);
+        $this->assertSame(1, $this->written[FlagOrderWithEmbroidery::ATTRIBUTE]);
     }
 
     /**
@@ -43,14 +43,14 @@ class FlagOrderWithEmbroideryTest extends TestCase
     {
         $this->execute($this->order([$this->item([]), $this->item([])]));
 
-        self::assertSame(0, $this->written[FlagOrderWithEmbroidery::ATTRIBUTE]);
+        $this->assertSame(0, $this->written[FlagOrderWithEmbroidery::ATTRIBUTE]);
     }
 
     public function testAnEmptyOrderIsFlaggedZero(): void
     {
         $this->execute($this->order([]));
 
-        self::assertSame(0, $this->written[FlagOrderWithEmbroidery::ATTRIBUTE]);
+        $this->assertSame(0, $this->written[FlagOrderWithEmbroidery::ATTRIBUTE]);
     }
 
     /**
@@ -61,7 +61,7 @@ class FlagOrderWithEmbroideryTest extends TestCase
     {
         $this->execute($this->order(null));
 
-        self::assertSame(0, $this->written[FlagOrderWithEmbroidery::ATTRIBUTE]);
+        $this->assertSame(0, $this->written[FlagOrderWithEmbroidery::ATTRIBUTE]);
     }
 
     /**
@@ -71,7 +71,7 @@ class FlagOrderWithEmbroideryTest extends TestCase
     {
         $this->execute($this->order([$this->item([OptionCodeInterface::OPTIONS => ''])]));
 
-        self::assertSame(0, $this->written[FlagOrderWithEmbroidery::ATTRIBUTE]);
+        $this->assertSame(0, $this->written[FlagOrderWithEmbroidery::ATTRIBUTE]);
     }
 
     /**
@@ -82,7 +82,7 @@ class FlagOrderWithEmbroideryTest extends TestCase
     {
         $this->execute($this->order([$this->item([OptionCodeInterface::SURCHARGE => '0.00'])]));
 
-        self::assertSame(0, $this->written[FlagOrderWithEmbroidery::ATTRIBUTE]);
+        $this->assertSame(0, $this->written[FlagOrderWithEmbroidery::ATTRIBUTE]);
     }
 
     /**
@@ -94,7 +94,7 @@ class FlagOrderWithEmbroideryTest extends TestCase
         (new FlagOrderWithEmbroidery())->execute(new Observer(['event' => new Event([])]));
         (new FlagOrderWithEmbroidery())->execute(new Observer(['event' => new Event(['order' => 'nope'])]));
 
-        self::assertSame([], $this->written);
+        $this->assertSame([], $this->written);
     }
 
     /**
@@ -108,7 +108,7 @@ class FlagOrderWithEmbroideryTest extends TestCase
 
         $this->execute($this->order([$item, $this->item([OptionCodeInterface::OPTIONS => '{"sides":[]}'])]));
 
-        self::assertSame(1, $this->written[FlagOrderWithEmbroidery::ATTRIBUTE]);
+        $this->assertSame(1, $this->written[FlagOrderWithEmbroidery::ATTRIBUTE]);
     }
 
     private function execute(OrderInterface $order): void

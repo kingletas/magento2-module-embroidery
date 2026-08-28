@@ -56,7 +56,7 @@ class ApplyEmbroideryPriceTest extends TestCase
 
         $this->observer()->execute($this->event($line));
 
-        self::assertSame(self::BASE_PRICE + 10.5, (float) $line->getData('custom_price'));
+        $this->assertSame(self::BASE_PRICE + 10.5, (float) $line->getData('custom_price'));
     }
 
     /**
@@ -68,7 +68,7 @@ class ApplyEmbroideryPriceTest extends TestCase
 
         $this->observer()->execute($this->event($line));
 
-        self::assertSame(
+        $this->assertSame(
             (float) $line->getData('custom_price'),
             (float) $line->getData('original_custom_price')
         );
@@ -87,7 +87,7 @@ class ApplyEmbroideryPriceTest extends TestCase
         $observer->execute($this->event($line));
         $observer->execute($this->event($line));
 
-        self::assertSame(self::BASE_PRICE + 10.5, (float) $line->getData('custom_price'));
+        $this->assertSame(self::BASE_PRICE + 10.5, (float) $line->getData('custom_price'));
     }
 
     /**
@@ -98,7 +98,7 @@ class ApplyEmbroideryPriceTest extends TestCase
     {
         $this->observer()->execute($this->event($this->line()));
 
-        self::assertTrue((bool) $this->product->getData('is_super_mode'));
+        $this->assertTrue((bool) $this->product->getData('is_super_mode'));
     }
 
     public function testTheSurchargeAndItsBreakdownAreRecordedOnTheLine(): void
@@ -107,12 +107,12 @@ class ApplyEmbroideryPriceTest extends TestCase
 
         $this->observer()->execute($this->event($line));
 
-        self::assertSame(
+        $this->assertSame(
             [OptionCodeInterface::SURCHARGE, OptionCodeInterface::PRICE_BREAKDOWN],
             array_column($line->addedOptions, 'code')
         );
-        self::assertSame('10.5', $line->addedOptions[0]['value']);
-        self::assertEquals(
+        $this->assertSame('10.5', $line->addedOptions[0]['value']);
+        $this->assertEquals(
             ['text' => 6.0, 'logo' => 4.5],
             (array) (new Json())->unserialize($line->addedOptions[1]['value'])
         );
@@ -124,7 +124,7 @@ class ApplyEmbroideryPriceTest extends TestCase
     public function testTheSelectionIsReadFromTheLineRatherThanTheRequest(): void
     {
         $reader = $this->createMock(SelectionReader::class);
-        $reader->expects(self::once())->method('fromQuoteItem')->willReturn($this->selection);
+        $reader->expects($this->once())->method('fromQuoteItem')->willReturn($this->selection);
 
         $this->observer(reader: $reader)->execute($this->event($this->line()));
     }
@@ -138,7 +138,7 @@ class ApplyEmbroideryPriceTest extends TestCase
 
         $this->observer()->execute($this->event($line));
 
-        self::assertNull($line->getData('custom_price'));
+        $this->assertNull($line->getData('custom_price'));
     }
 
     public function testALineWithoutEmbroideryIsLeftAlone(): void
@@ -148,8 +148,8 @@ class ApplyEmbroideryPriceTest extends TestCase
 
         $this->observer()->execute($this->event($line));
 
-        self::assertNull($line->getData('custom_price'));
-        self::assertSame([], $line->addedOptions);
+        $this->assertNull($line->getData('custom_price'));
+        $this->assertSame([], $line->addedOptions);
     }
 
     public function testAnEmptySelectionIsLeftAlone(): void
@@ -159,7 +159,7 @@ class ApplyEmbroideryPriceTest extends TestCase
 
         $this->observer()->execute($this->event($line));
 
-        self::assertNull($line->getData('custom_price'));
+        $this->assertNull($line->getData('custom_price'));
     }
 
     /**
@@ -173,8 +173,8 @@ class ApplyEmbroideryPriceTest extends TestCase
 
         $this->observer()->execute($this->event($line));
 
-        self::assertNull($line->getData('custom_price'));
-        self::assertSame([], $line->addedOptions);
+        $this->assertNull($line->getData('custom_price'));
+        $this->assertSame([], $line->addedOptions);
     }
 
     public function testNothingHappensWhenTheFeatureIsDisabled(): void
@@ -183,7 +183,7 @@ class ApplyEmbroideryPriceTest extends TestCase
 
         $this->observer(enabled: false)->execute($this->event($line));
 
-        self::assertNull($line->getData('custom_price'));
+        $this->assertNull($line->getData('custom_price'));
     }
 
     /**
@@ -197,7 +197,7 @@ class ApplyEmbroideryPriceTest extends TestCase
         $observer->execute(new Observer(['event' => new Event([])]));
         $observer->execute(new Observer(['event' => new Event(['quote_item' => 'nope'])]));
 
-        self::assertSame([], $this->logger->errors);
+        $this->assertSame([], $this->logger->errors);
     }
 
     /**
@@ -210,9 +210,9 @@ class ApplyEmbroideryPriceTest extends TestCase
 
         $this->observer()->execute($this->event($line));
 
-        self::assertCount(1, $this->logger->errors);
-        self::assertStringContainsString('surcharge', $this->logger->errors[0]);
-        self::assertNull($line->getData('custom_price'));
+        $this->assertCount(1, $this->logger->errors);
+        $this->assertStringContainsString('surcharge', $this->logger->errors[0]);
+        $this->assertNull($line->getData('custom_price'));
     }
 
     private function event(mixed $item): Observer

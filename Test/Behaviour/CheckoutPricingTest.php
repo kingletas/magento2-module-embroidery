@@ -33,7 +33,7 @@ use PHPUnit\Framework\TestCase;
 /**
  * A personalised garment, from the cart to the order.
  */
-final class CheckoutPricingTest extends TestCase
+class CheckoutPricingTest extends TestCase
 {
     private const SECTION = 'commerce_embroidery';
     private const STORE = 1;
@@ -63,8 +63,8 @@ final class CheckoutPricingTest extends TestCase
         $this->collectTotals($line);
 
         // 20.00 garment + 2.50 first line of text.
-        self::assertSame(22.50, (float) $line->getCustomPrice());
-        self::assertSame(22.50, (float) $line->getOriginalCustomPrice());
+        $this->assertSame(22.50, (float) $line->getCustomPrice());
+        $this->assertSame(22.50, (float) $line->getOriginalCustomPrice());
     }
 
     /**
@@ -80,7 +80,7 @@ final class CheckoutPricingTest extends TestCase
         $this->collectTotals($line);
         $this->collectTotals($line);
 
-        self::assertSame(22.50, (float) $line->getCustomPrice());
+        $this->assertSame(22.50, (float) $line->getCustomPrice());
     }
 
     /**
@@ -99,7 +99,7 @@ final class CheckoutPricingTest extends TestCase
         $line->setOriginalCustomPrice(null);
         $this->collectTotals($line);
 
-        self::assertSame(22.50, (float) $line->getCustomPrice());
+        $this->assertSame(22.50, (float) $line->getCustomPrice());
     }
 
     /**
@@ -117,7 +117,7 @@ final class CheckoutPricingTest extends TestCase
 
         // 30.00 garment + 2.50 for one line of text, and nothing of the other
         // line's logo work.
-        self::assertSame(32.50, (float) $plain->getCustomPrice());
+        $this->assertSame(32.50, (float) $plain->getCustomPrice());
     }
 
     /**
@@ -129,7 +129,7 @@ final class CheckoutPricingTest extends TestCase
 
         $this->collectTotals($line);
 
-        self::assertNull($line->getCustomPrice());
+        $this->assertNull($line->getCustomPrice());
     }
 
     /**
@@ -144,7 +144,7 @@ final class CheckoutPricingTest extends TestCase
 
         $this->collectTotals($child);
 
-        self::assertNull($child->getCustomPrice());
+        $this->assertNull($child->getCustomPrice());
     }
 
     /**
@@ -160,16 +160,16 @@ final class CheckoutPricingTest extends TestCase
         $surcharge = $line->getOptionByCode(OptionCodeInterface::SURCHARGE);
         $breakdown = $line->getOptionByCode(OptionCodeInterface::PRICE_BREAKDOWN);
 
-        self::assertNotNull($surcharge);
-        self::assertNotNull($breakdown);
+        $this->assertNotNull($surcharge);
+        $this->assertNotNull($breakdown);
 
         $components = (array) (new Json())->unserialize((string) $breakdown->getValue());
 
         // Left: one line of text.
-        self::assertSame(2.50, (float) $components['left_text']);
-        self::assertSame(8.00, (float) $components['right_custom_logo']);
-        self::assertSame(15.00, (float) $components['custom_logo_fee']);
-        self::assertSame(25.50, (float) $surcharge->getValue());
+        $this->assertSame(2.50, (float) $components['left_text']);
+        $this->assertSame(8.00, (float) $components['right_custom_logo']);
+        $this->assertSame(15.00, (float) $components['custom_logo_fee']);
+        $this->assertSame(25.50, (float) $surcharge->getValue());
     }
 
     /**
@@ -185,7 +185,7 @@ final class CheckoutPricingTest extends TestCase
         $this->collectTotals($line);
 
         // Two custom logos at 8.00, and one 15.00 fee.
-        self::assertSame(31.00, (float) $line->getCustomPrice());
+        $this->assertSame(31.00, (float) $line->getCustomPrice());
     }
 
     public function testWithTheModuleSwitchedOffNoLineIsRepriced(): void
@@ -195,7 +195,7 @@ final class CheckoutPricingTest extends TestCase
 
         $this->collectTotals($line);
 
-        self::assertNull($line->getCustomPrice());
+        $this->assertNull($line->getCustomPrice());
     }
 
     /**
@@ -210,7 +210,7 @@ final class CheckoutPricingTest extends TestCase
 
         $this->collectTotals($line);
 
-        self::assertNull($line->getCustomPrice());
+        $this->assertNull($line->getCustomPrice());
     }
 
     /**
@@ -225,7 +225,7 @@ final class CheckoutPricingTest extends TestCase
 
         $this->placeOrder($order);
 
-        self::assertSame(1, $order->getData(FlagOrderWithEmbroidery::ATTRIBUTE));
+        $this->assertSame(1, $order->getData(FlagOrderWithEmbroidery::ATTRIBUTE));
     }
 
     /**
@@ -238,7 +238,7 @@ final class CheckoutPricingTest extends TestCase
 
         $this->placeOrder($order);
 
-        self::assertSame(0, $order->getData(FlagOrderWithEmbroidery::ATTRIBUTE));
+        $this->assertSame(0, $order->getData(FlagOrderWithEmbroidery::ATTRIBUTE));
     }
 
     private function collectTotals(PersonalisedCartLine $line, ?ApplyEmbroideryPrice $observer = null): void

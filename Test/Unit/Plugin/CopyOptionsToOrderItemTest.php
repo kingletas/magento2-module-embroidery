@@ -38,16 +38,16 @@ class CopyOptionsToOrderItemTest extends TestCase
             ])
         );
 
-        self::assertSame('{"sides":[]}', $this->productOptions[OptionCodeInterface::OPTIONS]);
-        self::assertSame('12.50', $this->productOptions[OptionCodeInterface::SURCHARGE]);
-        self::assertSame('{"text":12.5}', $this->productOptions[OptionCodeInterface::PRICE_BREAKDOWN]);
+        $this->assertSame('{"sides":[]}', $this->productOptions[OptionCodeInterface::OPTIONS]);
+        $this->assertSame('12.50', $this->productOptions[OptionCodeInterface::SURCHARGE]);
+        $this->assertSame('{"text":12.5}', $this->productOptions[OptionCodeInterface::PRICE_BREAKDOWN]);
     }
 
     public function testTheOrderItemIsReturnedForTheNextPlugin(): void
     {
         $orderItem = $this->orderItem();
 
-        self::assertSame(
+        $this->assertSame(
             $orderItem,
             $this->plugin()->afterConvert($this->subject(), $orderItem, $this->quoteItem([]))
         );
@@ -67,7 +67,7 @@ class CopyOptionsToOrderItemTest extends TestCase
             $this->quoteItem([OptionCodeInterface::OPTIONS => '{"sides":[]}'])
         );
 
-        self::assertSame(['qty' => 1], $this->productOptions['info_buyRequest']);
+        $this->assertSame(['qty' => 1], $this->productOptions['info_buyRequest']);
     }
 
     /**
@@ -77,7 +77,7 @@ class CopyOptionsToOrderItemTest extends TestCase
     {
         $orderItem = $this->createMock(OrderItem::class);
         $orderItem->method('getProductOptions')->willReturn([]);
-        $orderItem->expects(self::never())->method('setProductOptions');
+        $orderItem->expects($this->never())->method('setProductOptions');
 
         $this->plugin()->afterConvert($this->subject(), $orderItem, $this->quoteItem([]));
     }
@@ -94,7 +94,7 @@ class CopyOptionsToOrderItemTest extends TestCase
             $this->quoteItem([OptionCodeInterface::SURCHARGE => '12.50'])
         );
 
-        self::assertSame([OptionCodeInterface::SURCHARGE], array_keys($this->productOptions));
+        $this->assertSame([OptionCodeInterface::SURCHARGE], array_keys($this->productOptions));
     }
 
     /**
@@ -111,7 +111,7 @@ class CopyOptionsToOrderItemTest extends TestCase
             $this->quoteItem([OptionCodeInterface::OPTIONS => '{"sides":[]}'])
         );
 
-        self::assertSame('{"sides":[]}', $this->productOptions[OptionCodeInterface::OPTIONS]);
+        $this->assertSame('{"sides":[]}', $this->productOptions[OptionCodeInterface::OPTIONS]);
     }
 
     /**
@@ -130,7 +130,7 @@ class CopyOptionsToOrderItemTest extends TestCase
             ])
         );
 
-        self::assertSame(OptionCodeInterface::ALL, array_keys($this->productOptions));
+        $this->assertSame(OptionCodeInterface::ALL, array_keys($this->productOptions));
     }
 
     private function plugin(): CopyOptionsToOrderItem

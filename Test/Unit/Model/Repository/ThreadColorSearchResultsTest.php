@@ -25,8 +25,8 @@ class ThreadColorSearchResultsTest extends TestCase
     {
         $results = new ThreadColorSearchResults();
 
-        self::assertInstanceOf(ThreadColorSearchResultsInterface::class, $results);
-        self::assertInstanceOf(SearchResults::class, $results);
+        $this->assertInstanceOf(ThreadColorSearchResultsInterface::class, $results);
+        $this->assertInstanceOf(SearchResults::class, $results);
     }
 
     public function testItCarriesItemsAndATotalCountLikeAnySearchResult(): void
@@ -35,7 +35,7 @@ class ThreadColorSearchResultsTest extends TestCase
         $results->setItems(['a', 'b']);
         $results->setTotalCount(2);
 
-        self::assertSame(['a', 'b'], $results->getItems());
-        self::assertSame(2, $results->getTotalCount());
+        $this->assertSame(['a', 'b'], $results->getItems());
+        $this->assertSame(2, $results->getTotalCount());
     }
 }

@@ -28,12 +28,12 @@ class ThreadColorTest extends TestCase
     {
         $declared = (new ReflectionProperty(ThreadColor::class, '_resourceName'))->getValue($this->entity());
 
-        self::assertSame(ThreadColorResource::class, $declared);
+        $this->assertSame(ThreadColorResource::class, $declared);
     }
 
     public function testTheEntityIsKeyedOnTheThreadColorId(): void
     {
-        self::assertSame(ThreadColorInterface::THREAD_COLOR_ID, $this->entity()->getIdFieldName());
+        $this->assertSame(ThreadColorInterface::THREAD_COLOR_ID, $this->entity()->getIdFieldName());
     }
 
     public function testEveryFieldRoundTripsThroughItsSetter(): void
@@ -49,15 +49,15 @@ class ThreadColorTest extends TestCase
             ->setCreatedAt('2026-01-01 00:00:00')
             ->setUpdatedAt('2026-01-02 00:00:00');
 
-        self::assertSame(3, $entity->getThreadColorId());
-        self::assertSame('T-100', $entity->getCode());
-        self::assertSame('Ceil Blue', $entity->getName());
-        self::assertSame('#7FA8D4', $entity->getHexCode());
-        self::assertSame('PMS 291', $entity->getPantoneCode());
-        self::assertSame(20, $entity->getSortOrder());
-        self::assertTrue($entity->isActive());
-        self::assertSame('2026-01-01 00:00:00', $entity->getCreatedAt());
-        self::assertSame('2026-01-02 00:00:00', $entity->getUpdatedAt());
+        $this->assertSame(3, $entity->getThreadColorId());
+        $this->assertSame('T-100', $entity->getCode());
+        $this->assertSame('Ceil Blue', $entity->getName());
+        $this->assertSame('#7FA8D4', $entity->getHexCode());
+        $this->assertSame('PMS 291', $entity->getPantoneCode());
+        $this->assertSame(20, $entity->getSortOrder());
+        $this->assertTrue($entity->isActive());
+        $this->assertSame('2026-01-01 00:00:00', $entity->getCreatedAt());
+        $this->assertSame('2026-01-02 00:00:00', $entity->getUpdatedAt());
     }
 
     /**
@@ -69,13 +69,13 @@ class ThreadColorTest extends TestCase
         $entity = $this->entity();
 
         $entity->setData(ThreadColorInterface::IS_ACTIVE, '1');
-        self::assertTrue($entity->isActive());
+        $this->assertTrue($entity->isActive());
 
         $entity->setData(ThreadColorInterface::IS_ACTIVE, '0');
-        self::assertFalse($entity->isActive());
+        $this->assertFalse($entity->isActive());
 
         $entity->setData(ThreadColorInterface::IS_ACTIVE, 0);
-        self::assertFalse($entity->isActive());
+        $this->assertFalse($entity->isActive());
     }
 
     /**
@@ -86,8 +86,8 @@ class ThreadColorTest extends TestCase
     {
         $entity = $this->entity();
 
-        self::assertSame(1, $entity->setIsActive(true)->getData(ThreadColorInterface::IS_ACTIVE));
-        self::assertSame(0, $entity->setIsActive(false)->getData(ThreadColorInterface::IS_ACTIVE));
+        $this->assertSame(1, $entity->setIsActive(true)->getData(ThreadColorInterface::IS_ACTIVE));
+        $this->assertSame(0, $entity->setIsActive(false)->getData(ThreadColorInterface::IS_ACTIVE));
     }
 
     public function testTheNumericGettersCoerceWhatTheDatabaseHandsBack(): void
@@ -96,8 +96,8 @@ class ThreadColorTest extends TestCase
         $entity->setData(ThreadColorInterface::THREAD_COLOR_ID, '3');
         $entity->setData(ThreadColorInterface::SORT_ORDER, '20');
 
-        self::assertSame(3, $entity->getThreadColorId());
-        self::assertSame(20, $entity->getSortOrder());
+        $this->assertSame(3, $entity->getThreadColorId());
+        $this->assertSame(20, $entity->getSortOrder());
     }
 
     /**
@@ -108,25 +108,25 @@ class ThreadColorTest extends TestCase
     {
         $entity = $this->entity();
 
-        self::assertNull($entity->getPantoneCode());
+        $this->assertNull($entity->getPantoneCode());
 
         $entity->setData(ThreadColorInterface::PANTONE_CODE, '');
-        self::assertNull($entity->getPantoneCode());
+        $this->assertNull($entity->getPantoneCode());
     }
 
     public function testAnUnsavedColourHasNoIdRatherThanZero(): void
     {
-        self::assertNull($this->entity()->getThreadColorId());
+        $this->assertNull($this->entity()->getThreadColorId());
     }
 
     public function testTheRequiredStringsDefaultToEmptyRatherThanNull(): void
     {
         $entity = $this->entity();
 
-        self::assertSame('', $entity->getCode());
-        self::assertSame('', $entity->getName());
-        self::assertSame('', $entity->getHexCode());
-        self::assertSame(0, $entity->getSortOrder());
+        $this->assertSame('', $entity->getCode());
+        $this->assertSame('', $entity->getName());
+        $this->assertSame('', $entity->getHexCode());
+        $this->assertSame(0, $entity->getSortOrder());
     }
 
     private function entity(): ThreadColor

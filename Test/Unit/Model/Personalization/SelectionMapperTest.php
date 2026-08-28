@@ -32,7 +32,7 @@ class SelectionMapperTest extends TestCase
             'text_line_3' => 'Cardiology',
         ]);
 
-        self::assertSame([1 => 'Jane Doe', 3 => 'Cardiology'], $selection->textLines);
+        $this->assertSame([1 => 'Jane Doe', 3 => 'Cardiology'], $selection->textLines);
     }
 
     public function testTrimsAndDropsBlankValues(): void
@@ -43,9 +43,9 @@ class SelectionMapperTest extends TestCase
             'thread_color' => 'ceil-blue',
         ]);
 
-        self::assertSame([1 => 'Jane Doe'], $selection->textLines);
-        self::assertNull($selection->fontStyle);
-        self::assertSame('ceil-blue', $selection->threadColorCode);
+        $this->assertSame([1 => 'Jane Doe'], $selection->textLines);
+        $this->assertNull($selection->fontStyle);
+        $this->assertSame('ceil-blue', $selection->threadColorCode);
     }
 
     /**
@@ -56,8 +56,8 @@ class SelectionMapperTest extends TestCase
     {
         $selection = $this->mapper->sideFromArray(Side::Left, ['logo_type' => 'free-please']);
 
-        self::assertSame(SideSelection::LOGO_NONE, $selection->logoType);
-        self::assertFalse($selection->hasLogo());
+        $this->assertSame(SideSelection::LOGO_NONE, $selection->logoType);
+        $this->assertFalse($selection->hasLogo());
     }
 
     public function testMapsOnlyTheSidesThePayloadCarries(): void
@@ -67,8 +67,8 @@ class SelectionMapperTest extends TestCase
             'right' => 'not an array',
         ]);
 
-        self::assertNotNull($selection->get(Side::Left));
-        self::assertNull($selection->get(Side::Right));
+        $this->assertNotNull($selection->get(Side::Left));
+        $this->assertNull($selection->get(Side::Right));
     }
 
     /**
@@ -81,11 +81,11 @@ class SelectionMapperTest extends TestCase
             'left' => ['text_line_1' => '   ', 'logo_type' => 'none'],
         ]);
 
-        self::assertTrue($selection->isEmpty());
+        $this->assertTrue($selection->isEmpty());
     }
 
     public function testAnEmptyPayloadMapsToAnEmptySelection(): void
     {
-        self::assertTrue($this->mapper->selectionFromArray([])->isEmpty());
+        $this->assertTrue($this->mapper->selectionFromArray([])->isEmpty());
     }
 }

@@ -42,7 +42,7 @@ class EmbroideryDetailsTest extends TestCase
 
     public function testItIsUsableAsALayoutViewModel(): void
     {
-        self::assertInstanceOf(ArgumentInterface::class, $this->viewModel());
+        $this->assertInstanceOf(ArgumentInterface::class, $this->viewModel());
     }
 
     /**
@@ -53,7 +53,7 @@ class EmbroideryDetailsTest extends TestCase
     {
         $viewModel = $this->viewModel();
 
-        self::assertEquals(
+        $this->assertEquals(
             $viewModel->forQuoteItem($this->createMock(QuoteItem::class)),
             $viewModel->forOrderItem($this->createMock(OrderItem::class))
         );
@@ -65,17 +65,17 @@ class EmbroideryDetailsTest extends TestCase
 
         $blocks = $this->viewModel()->forQuoteItem($this->createMock(QuoteItem::class));
 
-        self::assertSame(['Left', 'Right'], array_column($blocks, 'side'));
+        $this->assertSame(['Left', 'Right'], array_column($blocks, 'side'));
     }
 
     public function testEachTextLineIsRenderedWithItsLineNumber(): void
     {
         $rows = $this->rows();
 
-        self::assertSame('Line 1', (string) $rows[0]['label']);
-        self::assertSame('A. Nurse', $rows[0]['value']);
-        self::assertSame('Line 2', (string) $rows[1]['label']);
-        self::assertSame('RN', $rows[1]['value']);
+        $this->assertSame('Line 1', (string) $rows[0]['label']);
+        $this->assertSame('A. Nurse', $rows[0]['value']);
+        $this->assertSame('Line 2', (string) $rows[1]['label']);
+        $this->assertSame('RN', $rows[1]['value']);
     }
 
     /**
@@ -88,7 +88,7 @@ class EmbroideryDetailsTest extends TestCase
             new SideSelection(Side::Left, [1 => 'A. Nurse', 3 => 'Cardiology'], null, null),
         ]);
 
-        self::assertSame(['Line 1', 'Line 3'], array_map(
+        $this->assertSame(['Line 1', 'Line 3'], array_map(
             static fn (array $row): string => (string) $row['label'],
             $this->rows()
         ));
@@ -99,7 +99,7 @@ class EmbroideryDetailsTest extends TestCase
         $rows = $this->rows();
         $threadRow = $this->rowLabelled($rows, 'Thread colour');
 
-        self::assertSame('Ceil Blue', $threadRow['value']);
+        $this->assertSame('Ceil Blue', $threadRow['value']);
     }
 
     /**
@@ -110,7 +110,7 @@ class EmbroideryDetailsTest extends TestCase
     {
         $this->threadColors = [];
 
-        self::assertSame('T-100', $this->rowLabelled($this->rows(), 'Thread colour')['value']);
+        $this->assertSame('T-100', $this->rowLabelled($this->rows(), 'Thread colour')['value']);
     }
 
     /**
@@ -125,8 +125,8 @@ class EmbroideryDetailsTest extends TestCase
 
         $this->viewModel()->forQuoteItem($this->createMock(QuoteItem::class));
 
-        self::assertCount(1, $this->codeLookups);
-        self::assertSame(['T-100', 'T-101'], array_values($this->codeLookups[0]));
+        $this->assertCount(1, $this->codeLookups);
+        $this->assertSame(['T-100', 'T-101'], array_values($this->codeLookups[0]));
     }
 
     /**
@@ -141,12 +141,12 @@ class EmbroideryDetailsTest extends TestCase
 
         $this->viewModel()->forQuoteItem($this->createMock(QuoteItem::class));
 
-        self::assertSame([], $this->codeLookups);
+        $this->assertSame([], $this->codeLookups);
     }
 
     public function testTheFontIsShownWhenOneWasChosen(): void
     {
-        self::assertSame('block', $this->rowLabelled($this->rows(), 'Font')['value']);
+        $this->assertSame('block', $this->rowLabelled($this->rows(), 'Font')['value']);
     }
 
     /**
@@ -161,7 +161,7 @@ class EmbroideryDetailsTest extends TestCase
 
         $labels = array_map(static fn (array $row): string => (string) $row['label'], $this->rows());
 
-        self::assertSame(['Line 1'], $labels);
+        $this->assertSame(['Line 1'], $labels);
     }
 
     public function testALogoIsShownWithItsTypeAndPosition(): void
@@ -172,8 +172,8 @@ class EmbroideryDetailsTest extends TestCase
 
         $rows = $this->rows();
 
-        self::assertSame('Stock', $this->rowLabelled($rows, 'Logo')['value']);
-        self::assertSame('left_chest', $this->rowLabelled($rows, 'Logo position')['value']);
+        $this->assertSame('Stock', $this->rowLabelled($rows, 'Logo')['value']);
+        $this->assertSame('left_chest', $this->rowLabelled($rows, 'Logo position')['value']);
     }
 
     /**
@@ -184,14 +184,14 @@ class EmbroideryDetailsTest extends TestCase
     {
         $this->selection = null;
 
-        self::assertSame([], $this->viewModel()->forQuoteItem($this->createMock(QuoteItem::class)));
+        $this->assertSame([], $this->viewModel()->forQuoteItem($this->createMock(QuoteItem::class)));
     }
 
     public function testAnEmptySelectionRendersNothing(): void
     {
         $this->selection = new EmbroiderySelection([]);
 
-        self::assertSame([], $this->viewModel()->forQuoteItem($this->createMock(QuoteItem::class)));
+        $this->assertSame([], $this->viewModel()->forQuoteItem($this->createMock(QuoteItem::class)));
     }
 
     /**
@@ -215,7 +215,7 @@ class EmbroideryDetailsTest extends TestCase
             }
         }
 
-        self::fail(sprintf('No row labelled "%s" was rendered.', $label));
+        $this->fail(sprintf('No row labelled "%s" was rendered.', $label));
     }
 
     private function side(Side $side = Side::Left, string $threadColorCode = 'T-100'): SideSelection

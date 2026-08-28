@@ -52,21 +52,21 @@ class ThreadColorImportTest extends TestCase
     {
         $import = $this->import();
 
-        self::assertSame(ThreadColorImport::ENTITY_CODE, $import->getEntityTypeCode());
-        self::assertContains('code', $import->getValidColumnNames());
-        self::assertContains('hex_code', $import->getValidColumnNames());
+        $this->assertSame(ThreadColorImport::ENTITY_CODE, $import->getEntityTypeCode());
+        $this->assertContains('code', $import->getValidColumnNames());
+        $this->assertContains('hex_code', $import->getValidColumnNames());
     }
 
     public function testAWellFormedRowValidates(): void
     {
-        self::assertTrue($this->import()->validateRow($this->row(), 1));
-        self::assertSame([], $this->errors);
+        $this->assertTrue($this->import()->validateRow($this->row(), 1));
+        $this->assertSame([], $this->errors);
     }
 
     public function testARowWithNoCodeIsRejected(): void
     {
-        self::assertFalse($this->import()->validateRow($this->row(['code' => '  ']), 1));
-        self::assertSame(['CodeIsRequired'], array_column($this->errors, 'code'));
+        $this->assertFalse($this->import()->validateRow($this->row(['code' => '  ']), 1));
+        $this->assertSame(['CodeIsRequired'], array_column($this->errors, 'code'));
     }
 
     /**
@@ -78,23 +78,23 @@ class ThreadColorImportTest extends TestCase
         foreach (['Ceil Blue', 'CEIL-BLUE', '-leading', 'ceil_blue', 'ceil.blue'] as $index => $code) {
             $this->errors = [];
 
-            self::assertFalse(
+            $this->assertFalse(
                 $this->import()->validateRow($this->row(['code' => $code]), $index + 1),
                 sprintf('"%s" should not be an acceptable code.', $code)
             );
-            self::assertSame(['CodeIsInvalid'], array_column($this->errors, 'code'));
+            $this->assertSame(['CodeIsInvalid'], array_column($this->errors, 'code'));
         }
     }
 
     public function testALowercaseHyphenatedCodeIsAccepted(): void
     {
-        self::assertTrue($this->import()->validateRow($this->row(['code' => 'ceil-blue-2']), 1));
+        $this->assertTrue($this->import()->validateRow($this->row(['code' => 'ceil-blue-2']), 1));
     }
 
     public function testARowWithNoNameIsRejected(): void
     {
-        self::assertFalse($this->import()->validateRow($this->row(['name' => '  ']), 1));
-        self::assertSame(['NameIsRequired'], array_column($this->errors, 'code'));
+        $this->assertFalse($this->import()->validateRow($this->row(['name' => '  ']), 1));
+        $this->assertSame(['NameIsRequired'], array_column($this->errors, 'code'));
     }
 
     /**
@@ -106,11 +106,11 @@ class ThreadColorImportTest extends TestCase
         foreach (['', '1a2b3c', '#12345', 'blue', '#1a2b3g'] as $index => $hex) {
             $this->errors = [];
 
-            self::assertFalse(
+            $this->assertFalse(
                 $this->import()->validateRow($this->row(['hex_code' => $hex]), $index + 1),
                 sprintf('"%s" should not be an acceptable hex value.', $hex)
             );
-            self::assertSame(['HexIsInvalid'], array_column($this->errors, 'code'));
+            $this->assertSame(['HexIsInvalid'], array_column($this->errors, 'code'));
         }
     }
 
@@ -122,8 +122,8 @@ class ThreadColorImportTest extends TestCase
     {
         $import = $this->import(Import::BEHAVIOR_DELETE);
 
-        self::assertTrue($import->validateRow(['code' => 'ceil-blue'], 1));
-        self::assertSame([], $this->errors);
+        $this->assertTrue($import->validateRow(['code' => 'ceil-blue'], 1));
+        $this->assertSame([], $this->errors);
     }
 
     /**
@@ -137,22 +137,22 @@ class ThreadColorImportTest extends TestCase
         $import->validateRow($this->row(['code' => '']), 1);
         $import->validateRow($this->row(['code' => '']), 1);
 
-        self::assertCount(1, $this->errors);
+        $this->assertCount(1, $this->errors);
     }
 
     public function testAValidRowIsWrittenWithEveryColumnMapped(): void
     {
         $this->bunches = [[1 => $this->row()]];
 
-        self::assertTrue($this->import()->importData());
+        $this->assertTrue($this->import()->importData());
 
         $written = $this->upserts[0][0];
-        self::assertSame('ceil-blue', $written[ThreadColorInterface::CODE]);
-        self::assertSame('Ceil Blue', $written[ThreadColorInterface::NAME]);
-        self::assertSame('#7fa8d4', $written[ThreadColorInterface::HEX_CODE]);
-        self::assertSame('PMS 291', $written[ThreadColorInterface::PANTONE_CODE]);
-        self::assertSame(20, $written[ThreadColorInterface::SORT_ORDER]);
-        self::assertSame(1, $written[ThreadColorInterface::IS_ACTIVE]);
+        $this->assertSame('ceil-blue', $written[ThreadColorInterface::CODE]);
+        $this->assertSame('Ceil Blue', $written[ThreadColorInterface::NAME]);
+        $this->assertSame('#7fa8d4', $written[ThreadColorInterface::HEX_CODE]);
+        $this->assertSame('PMS 291', $written[ThreadColorInterface::PANTONE_CODE]);
+        $this->assertSame(20, $written[ThreadColorInterface::SORT_ORDER]);
+        $this->assertSame(1, $written[ThreadColorInterface::IS_ACTIVE]);
     }
 
     /**
@@ -165,7 +165,7 @@ class ThreadColorImportTest extends TestCase
 
         $this->import()->importData();
 
-        self::assertSame('#7fa8d4', $this->upserts[0][0][ThreadColorInterface::HEX_CODE]);
+        $this->assertSame('#7fa8d4', $this->upserts[0][0][ThreadColorInterface::HEX_CODE]);
     }
 
     /**
@@ -178,7 +178,7 @@ class ThreadColorImportTest extends TestCase
 
         $this->import()->importData();
 
-        self::assertNull($this->upserts[0][0][ThreadColorInterface::PANTONE_CODE]);
+        $this->assertNull($this->upserts[0][0][ThreadColorInterface::PANTONE_CODE]);
     }
 
     /**
@@ -198,7 +198,7 @@ class ThreadColorImportTest extends TestCase
 
             $this->import()->importData();
 
-            self::assertSame(
+            $this->assertSame(
                 $expected,
                 $this->upserts[0][0][ThreadColorInterface::IS_ACTIVE],
                 sprintf('"%s" should read as %d.', $value, $expected)
@@ -218,8 +218,8 @@ class ThreadColorImportTest extends TestCase
 
         $this->import()->importData();
 
-        self::assertCount(1, $this->upserts[0]);
-        self::assertSame('Second', $this->upserts[0][0][ThreadColorInterface::NAME]);
+        $this->assertCount(1, $this->upserts[0]);
+        $this->assertSame('Second', $this->upserts[0][0][ThreadColorInterface::NAME]);
     }
 
     public function testAnInvalidRowIsNotWritten(): void
@@ -231,15 +231,15 @@ class ThreadColorImportTest extends TestCase
 
         $this->import()->importData();
 
-        self::assertCount(1, $this->upserts[0]);
+        $this->assertCount(1, $this->upserts[0]);
     }
 
     public function testABunchWithNothingValidWritesNothing(): void
     {
         $this->bunches = [[1 => $this->row(['code' => ''])]];
 
-        self::assertFalse($this->import()->importData());
-        self::assertSame([], $this->upserts);
+        $this->assertFalse($this->import()->importData());
+        $this->assertSame([], $this->upserts);
     }
 
     public function testEveryBunchIsProcessed(): void
@@ -251,7 +251,7 @@ class ThreadColorImportTest extends TestCase
 
         $this->import()->importData();
 
-        self::assertCount(2, $this->upserts);
+        $this->assertCount(2, $this->upserts);
     }
 
     public function testDeleteRemovesTheListedCodes(): void
@@ -261,9 +261,9 @@ class ThreadColorImportTest extends TestCase
             2 => ['code' => 'navy'],
         ]];
 
-        self::assertTrue($this->import(Import::BEHAVIOR_DELETE)->importData());
-        self::assertStringContainsString('ceil-blue', $this->deletes[0]);
-        self::assertStringContainsString('navy', $this->deletes[0]);
+        $this->assertTrue($this->import(Import::BEHAVIOR_DELETE)->importData());
+        $this->assertStringContainsString('ceil-blue', $this->deletes[0]);
+        $this->assertStringContainsString('navy', $this->deletes[0]);
     }
 
     /**
@@ -276,16 +276,16 @@ class ThreadColorImportTest extends TestCase
 
         $this->import(Import::BEHAVIOR_DELETE)->importData();
 
-        self::assertSame([], $this->deletes);
-        self::assertSame(['CodeIsInvalid'], array_column($this->errors, 'code'));
+        $this->assertSame([], $this->deletes);
+        $this->assertSame(['CodeIsInvalid'], array_column($this->errors, 'code'));
     }
 
     public function testDeletingNothingIsReportedAsNoChange(): void
     {
         $this->bunches = [[1 => ['code' => '']]];
 
-        self::assertFalse($this->import(Import::BEHAVIOR_DELETE)->importData());
-        self::assertSame([], $this->deletes);
+        $this->assertFalse($this->import(Import::BEHAVIOR_DELETE)->importData());
+        $this->assertSame([], $this->deletes);
     }
 
     /**

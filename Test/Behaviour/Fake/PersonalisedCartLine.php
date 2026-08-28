@@ -16,7 +16,7 @@ use Magento\Framework\DataObject;
 /**
  * A cart line that answers `getOptionByCode()`, the way a stored line does.
  */
-final class PersonalisedCartLine extends CartLine
+class PersonalisedCartLine extends CartLine
 {
     /** @var array<string, DataObject> Options the line already carries. */
     private array $options = [];

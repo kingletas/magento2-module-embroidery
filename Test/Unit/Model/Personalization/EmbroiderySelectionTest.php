@@ -25,8 +25,8 @@ class EmbroiderySelectionTest extends TestCase
             new SideSelection(Side::Left, [1 => 'second']),
         ]);
 
-        self::assertCount(1, $selection->all());
-        self::assertSame([1 => 'second'], $selection->get(Side::Left)?->textLines);
+        $this->assertCount(1, $selection->all());
+        $this->assertSame([1 => 'second'], $selection->get(Side::Left)?->textLines);
     }
 
     /**
@@ -40,15 +40,15 @@ class EmbroiderySelectionTest extends TestCase
             new SideSelection(Side::Right, [1 => 'Jane Doe']),
         ]);
 
-        self::assertNull($selection->get(Side::Left));
-        self::assertNotNull($selection->get(Side::Right));
-        self::assertFalse($selection->isEmpty());
+        $this->assertNull($selection->get(Side::Left));
+        $this->assertNotNull($selection->get(Side::Right));
+        $this->assertFalse($selection->isEmpty());
     }
 
     public function testAnEmptySelectionSaysSo(): void
     {
-        self::assertTrue((new EmbroiderySelection())->isEmpty());
-        self::assertSame([], (new EmbroiderySelection())->toArray());
+        $this->assertTrue((new EmbroiderySelection())->isEmpty());
+        $this->assertSame([], (new EmbroiderySelection())->toArray());
     }
 
     public function testRejectsAnythingThatIsNotASideSelection(): void
@@ -62,6 +62,6 @@ class EmbroiderySelectionTest extends TestCase
     {
         $selection = new EmbroiderySelection([new SideSelection(Side::Right, [1 => 'Jane Doe'])]);
 
-        self::assertSame(['right'], array_keys($selection->toArray()));
+        $this->assertSame(['right'], array_keys($selection->toArray()));
     }
 }
