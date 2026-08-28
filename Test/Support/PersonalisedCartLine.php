@@ -8,9 +8,9 @@
  */
 declare(strict_types=1);
 
-namespace Commerce\Embroidery\Test\Behaviour\Fake;
+namespace Commerce\Embroidery\Test\Support;
 
-use Commerce\Embroidery\Test\Unit\Fake\CartLine;
+use Commerce\Embroidery\Test\Support\CartLine;
 use Magento\Framework\DataObject;
 
 /**

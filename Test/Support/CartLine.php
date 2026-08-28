@@ -8,7 +8,7 @@
  */
 declare(strict_types=1);
 
-namespace Commerce\Embroidery\Test\Unit\Fake;
+namespace Commerce\Embroidery\Test\Support;
 
 use Magento\Catalog\Model\Product;
 use Magento\Quote\Model\Quote\Item as QuoteItem;
