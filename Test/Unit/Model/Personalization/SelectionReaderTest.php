@@ -16,21 +16,21 @@ use Commerce\Embroidery\Model\Personalization\SelectionMapper;
 use Commerce\Embroidery\Model\Personalization\SelectionReader;
 use Commerce\Embroidery\Model\Personalization\Side;
 use Commerce\Embroidery\Model\Personalization\SideSelection;
-use Commerce\Embroidery\Test\Unit\Fake\RecordingLogger;
 use Magento\Framework\Serialize\Serializer\Json;
 use Magento\Quote\Model\Quote\Item as QuoteItem;
 use Magento\Quote\Model\Quote\Item\Option;
 use Magento\Sales\Model\Order\Item as OrderItem;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use Psr\Log\LoggerInterface;
 
 class SelectionReaderTest extends TestCase
 {
-    private RecordingLogger $logger;
+    private LoggerInterface&MockObject $logger;
 
     protected function setUp(): void
     {
-        $this->logger = new RecordingLogger();
+        $this->logger = $this->createMock(LoggerInterface::class);
     }
 
     public function testAQuoteItemCarryingSelectionsIsRecognised(): void
@@ -139,9 +139,11 @@ class SelectionReaderTest extends TestCase
      */
     public function testACorruptPayloadIsLoggedAndReadsAsNothing(): void
     {
+        $this->logger->expects($this->once())
+            ->method('warning')
+            ->with($this->stringContains('decode'));
+
         $this->assertNull($this->reader()->fromQuoteItem($this->quoteItem('{not json')));
-        $this->assertCount(1, $this->logger->warnings);
-        $this->assertStringContainsString('decode', $this->logger->warnings[0]);
     }
 
     /**
@@ -150,8 +152,9 @@ class SelectionReaderTest extends TestCase
      */
     public function testAnEmptyPayloadIsNotTreatedAsCorruption(): void
     {
+        $this->logger->expects($this->never())->method('warning');
+
         $this->assertNull($this->reader()->fromQuoteItem($this->quoteItem('   ')));
-        $this->assertSame([], $this->logger->warnings);
     }
 
     /**

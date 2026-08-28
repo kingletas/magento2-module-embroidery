@@ -21,19 +21,20 @@ use Commerce\Embroidery\Model\Personalization\SideSelection;
 use Commerce\Embroidery\Observer\ApplyEmbroideryPrice;
 use Commerce\Embroidery\Test\Unit\Fake\CartLine;
 use Commerce\Embroidery\Test\Unit\Fake\PricedProduct;
-use Commerce\Embroidery\Test\Unit\Fake\RecordingLogger;
 use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Framework\Event;
 use Magento\Framework\Event\Observer;
 use Magento\Framework\Serialize\Serializer\Json;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use Psr\Log\LoggerInterface;
 use RuntimeException;
 
 class ApplyEmbroideryPriceTest extends TestCase
 {
     private const BASE_PRICE = 20.0;
 
-    private RecordingLogger $logger;
+    private LoggerInterface&MockObject $logger;
     private ?EmbroiderySelection $selection = null;
     private ChargeBreakdown $charges;
     private ?RuntimeException $calculatorFailure = null;
@@ -41,7 +42,7 @@ class ApplyEmbroideryPriceTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->logger = new RecordingLogger();
+        $this->logger = $this->createMock(LoggerInterface::class);
         $this->calculatorFailure = null;
         $this->product = new PricedProduct(self::BASE_PRICE);
         $this->charges = new ChargeBreakdown(['text' => 6.0, 'logo' => 4.5]);
@@ -192,12 +193,12 @@ class ApplyEmbroideryPriceTest extends TestCase
      */
     public function testAnEventWithoutAQuoteItemIsIgnored(): void
     {
+        $this->logger->expects($this->never())->method('error');
+
         $observer = $this->observer();
 
         $observer->execute(new Observer(['event' => new Event([])]));
         $observer->execute(new Observer(['event' => new Event(['quote_item' => 'nope'])]));
-
-        $this->assertSame([], $this->logger->errors);
     }
 
     /**
@@ -205,13 +206,15 @@ class ApplyEmbroideryPriceTest extends TestCase
      */
     public function testAPricingFailureIsContainedAndLogged(): void
     {
+        $this->logger->expects($this->once())
+            ->method('error')
+            ->with($this->stringContains('surcharge'));
+
         $this->calculatorFailure = new RuntimeException('no such config scope');
         $line = $this->line();
 
         $this->observer()->execute($this->event($line));
 
-        $this->assertCount(1, $this->logger->errors);
-        $this->assertStringContainsString('surcharge', $this->logger->errors[0]);
         $this->assertNull($line->getData('custom_price'));
     }
 

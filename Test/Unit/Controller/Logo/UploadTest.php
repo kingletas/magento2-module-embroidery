@@ -14,7 +14,6 @@ use Commerce\Embroidery\Controller\Logo\Upload;
 use Commerce\Embroidery\Model\Config;
 use Commerce\Embroidery\Model\Upload\LogoStorage;
 use Commerce\Embroidery\Model\Upload\UploadedLogo;
-use Commerce\Embroidery\Test\Unit\Fake\RecordingLogger;
 use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Framework\App\Action\HttpGetActionInterface;
 use Magento\Framework\App\Action\HttpPostActionInterface;
@@ -25,6 +24,7 @@ use Magento\Framework\Data\Form\FormKey\Validator as FormKeyValidator;
 use Magento\Framework\Exception\LocalizedException;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use Psr\Log\LoggerInterface;
 use RuntimeException;
 
 class UploadTest extends TestCase
@@ -46,7 +46,7 @@ class UploadTest extends TestCase
     /** @var string[] */
     private array $stored = [];
 
-    private RecordingLogger $logger;
+    private LoggerInterface&MockObject $logger;
     private FormKeyValidator&MockObject $formKeyValidator;
 
     protected function setUp(): void
@@ -55,7 +55,7 @@ class UploadTest extends TestCase
         $this->data = [];
         $this->storeFailures = [];
         $this->stored = [];
-        $this->logger = new RecordingLogger();
+        $this->logger = $this->createMock(LoggerInterface::class);
         $this->files = [self::LEFT_KEY => ['error' => UPLOAD_ERR_OK, 'name' => 'logo.png']];
 
         $this->formKeyValidator = $this->createMock(FormKeyValidator::class);
@@ -115,12 +115,13 @@ class UploadTest extends TestCase
      */
     public function testAShopperFacingFailureIsShownAsWritten(): void
     {
+        $this->logger->expects($this->never())->method('error');
+
         $this->storeFailures[self::LEFT_KEY] = new LocalizedException(__('Only PNG and JPEG are accepted.'));
 
         $this->controller()->execute();
 
         $this->assertSame('Only PNG and JPEG are accepted.', (string) $this->data['errors']['left']);
-        $this->assertSame([], $this->logger->errors);
     }
 
     /**
@@ -129,12 +130,13 @@ class UploadTest extends TestCase
      */
     public function testAnInternalFailureIsLoggedAndReportedAsAGenericMessage(): void
     {
+        $this->logger->expects($this->once())->method('error');
+
         $this->storeFailures[self::LEFT_KEY] = new RuntimeException('/var/www/pub/media/embroidery not writable');
 
         $this->controller()->execute();
 
         $this->assertStringNotContainsString('/var/www', (string) $this->data['errors']['left']);
-        $this->assertCount(1, $this->logger->errors);
     }
 
     /**
