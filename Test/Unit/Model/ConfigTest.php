@@ -11,7 +11,7 @@ declare(strict_types=1);
 namespace Commerce\Embroidery\Test\Unit\Model;
 
 use Commerce\Embroidery\Model\Config;
-use Commerce\Embroidery\Test\Unit\Fake\ArrayScopeConfig;
+use Magento\Framework\App\Config\ScopeConfigInterface;
 use PHPUnit\Framework\TestCase;
 
 class ConfigTest extends TestCase
@@ -22,7 +22,7 @@ class ConfigTest extends TestCase
     public function testEveryPathIsReadUnderTheConfiguredSection(): void
     {
         $config = new Config(
-            new ArrayScopeConfig([
+            $this->scopeConfig([
                 'acme_embroidery/general/enabled' => '1',
                 'acme_embroidery/charges/stock_logo_price' => '4.50',
             ]),
@@ -181,6 +181,22 @@ class ConfigTest extends TestCase
             $qualified['test_embroidery/' . $path] = $value;
         }
 
-        return new Config(new ArrayScopeConfig($qualified), 'test_embroidery');
+        return new Config($this->scopeConfig($qualified), 'test_embroidery');
+    }
+
+    /**
+     * @param array<string, mixed> $values
+     */
+    private function scopeConfig(array $values): ScopeConfigInterface
+    {
+        $scopeConfig = $this->createMock(ScopeConfigInterface::class);
+        $scopeConfig->method('getValue')->willReturnCallback(
+            static fn (string $path): mixed => $values[$path] ?? null
+        );
+        $scopeConfig->method('isSetFlag')->willReturnCallback(
+            static fn (string $path): bool => !in_array($values[$path] ?? null, [null, '', '0', 0, false], true)
+        );
+
+        return $scopeConfig;
     }
 }

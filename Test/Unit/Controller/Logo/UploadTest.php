@@ -14,8 +14,8 @@ use Commerce\Embroidery\Controller\Logo\Upload;
 use Commerce\Embroidery\Model\Config;
 use Commerce\Embroidery\Model\Upload\LogoStorage;
 use Commerce\Embroidery\Model\Upload\UploadedLogo;
-use Commerce\Embroidery\Test\Unit\Fake\ArrayScopeConfig;
 use Commerce\Embroidery\Test\Unit\Fake\RecordingLogger;
+use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Framework\App\Action\HttpGetActionInterface;
 use Magento\Framework\App\Action\HttpPostActionInterface;
 use Magento\Framework\App\Request\Http as HttpRequest;
@@ -213,7 +213,7 @@ class UploadTest extends TestCase
         );
 
         $config = new Config(
-            new ArrayScopeConfig(['test_embroidery/general/enabled' => $enabled ? '1' : '0']),
+            $this->scopeConfig(['test_embroidery/general/enabled' => $enabled ? '1' : '0']),
             'test_embroidery'
         );
 
@@ -245,5 +245,21 @@ class UploadTest extends TestCase
         $factory->method('create')->willReturn($json);
 
         return $factory;
+    }
+
+    /**
+     * @param array<string, mixed> $values
+     */
+    private function scopeConfig(array $values): ScopeConfigInterface
+    {
+        $scopeConfig = $this->createMock(ScopeConfigInterface::class);
+        $scopeConfig->method('getValue')->willReturnCallback(
+            static fn (string $path): mixed => $values[$path] ?? null
+        );
+        $scopeConfig->method('isSetFlag')->willReturnCallback(
+            static fn (string $path): bool => !in_array($values[$path] ?? null, [null, '', '0', 0, false], true)
+        );
+
+        return $scopeConfig;
     }
 }

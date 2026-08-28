@@ -21,14 +21,14 @@ use Commerce\Embroidery\Model\Personalization\SideSelection;
 use Commerce\Embroidery\Observer\ApplyEmbroideryPrice;
 use Commerce\Embroidery\Observer\FlagOrderWithEmbroidery;
 use Commerce\Embroidery\Test\Behaviour\Fake\PersonalisedCartLine;
-use Commerce\Embroidery\Test\Unit\Fake\ArrayScopeConfig;
 use Commerce\Embroidery\Test\Unit\Fake\PricedProduct;
-use Commerce\Embroidery\Test\Unit\Fake\RecordingLogger;
+use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Framework\Event;
 use Magento\Framework\Event\Observer;
 use Magento\Framework\Serialize\Serializer\Json;
 use Magento\Sales\Api\Data\OrderInterface;
 use PHPUnit\Framework\TestCase;
+use Psr\Log\LoggerInterface;
 
 /**
  * A personalised garment, from the cart to the order.
@@ -38,14 +38,14 @@ class CheckoutPricingTest extends TestCase
     private const SECTION = 'commerce_embroidery';
     private const STORE = 1;
 
-    private RecordingLogger $logger;
+    private LoggerInterface $logger;
 
     /** @var array<string, string> */
     private array $settings = [];
 
     protected function setUp(): void
     {
-        $this->logger = new RecordingLogger();
+        $this->logger = $this->createMock(LoggerInterface::class);
         $this->settings = [
             self::SECTION . '/general/enabled' => '1',
             self::SECTION . '/charges/text_line_1_price' => '2.50',
@@ -262,7 +262,7 @@ class CheckoutPricingTest extends TestCase
     private function observer(): ApplyEmbroideryPrice
     {
         $serializer = new Json();
-        $config = new Config(new ArrayScopeConfig($this->settings), self::SECTION);
+        $config = new Config($this->scopeConfig($this->settings), self::SECTION);
 
         return new ApplyEmbroideryPrice(
             new SelectionReader($serializer, new SelectionMapper(), $this->logger),
@@ -323,5 +323,21 @@ class CheckoutPricingTest extends TestCase
         $order->method('getItems')->willReturn($orderItems);
 
         return $order;
+    }
+
+    /**
+     * @param array<string, mixed> $values
+     */
+    private function scopeConfig(array $values): ScopeConfigInterface
+    {
+        $scopeConfig = $this->createMock(ScopeConfigInterface::class);
+        $scopeConfig->method('getValue')->willReturnCallback(
+            static fn (string $path): mixed => $values[$path] ?? null
+        );
+        $scopeConfig->method('isSetFlag')->willReturnCallback(
+            static fn (string $path): bool => !in_array($values[$path] ?? null, [null, '', '0', 0, false], true)
+        );
+
+        return $scopeConfig;
     }
 }

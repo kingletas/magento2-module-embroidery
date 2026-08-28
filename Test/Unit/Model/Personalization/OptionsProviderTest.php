@@ -15,7 +15,7 @@ use Commerce\Embroidery\Api\ThreadColorRepositoryInterface;
 use Commerce\Embroidery\Model\Config;
 use Commerce\Embroidery\Model\Personalization\OptionsProvider;
 use Commerce\Embroidery\Model\Personalization\Side;
-use Commerce\Embroidery\Test\Unit\Fake\ArrayScopeConfig;
+use Magento\Framework\App\Config\ScopeConfigInterface;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
@@ -181,7 +181,7 @@ class OptionsProviderTest extends TestCase
 
         return new OptionsProvider(
             $repository,
-            new Config(new ArrayScopeConfig($qualified), 'test_embroidery'),
+            new Config($this->scopeConfig($qualified), 'test_embroidery'),
             $fontStyles,
             $logoLocations,
             $logoTypes
@@ -196,5 +196,21 @@ class OptionsProviderTest extends TestCase
         $color->method('getHexCode')->willReturn($hex);
 
         return $color;
+    }
+
+    /**
+     * @param array<string, mixed> $values
+     */
+    private function scopeConfig(array $values): ScopeConfigInterface
+    {
+        $scopeConfig = $this->createMock(ScopeConfigInterface::class);
+        $scopeConfig->method('getValue')->willReturnCallback(
+            static fn (string $path): mixed => $values[$path] ?? null
+        );
+        $scopeConfig->method('isSetFlag')->willReturnCallback(
+            static fn (string $path): bool => !in_array($values[$path] ?? null, [null, '', '0', 0, false], true)
+        );
+
+        return $scopeConfig;
     }
 }

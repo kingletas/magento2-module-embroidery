@@ -19,10 +19,10 @@ use Commerce\Embroidery\Model\Personalization\SelectionReader;
 use Commerce\Embroidery\Model\Personalization\Side;
 use Commerce\Embroidery\Model\Personalization\SideSelection;
 use Commerce\Embroidery\Observer\ApplyEmbroideryPrice;
-use Commerce\Embroidery\Test\Unit\Fake\ArrayScopeConfig;
 use Commerce\Embroidery\Test\Unit\Fake\CartLine;
 use Commerce\Embroidery\Test\Unit\Fake\PricedProduct;
 use Commerce\Embroidery\Test\Unit\Fake\RecordingLogger;
+use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Framework\Event;
 use Magento\Framework\Event\Observer;
 use Magento\Framework\Serialize\Serializer\Json;
@@ -249,10 +249,26 @@ class ApplyEmbroideryPriceTest extends TestCase
         );
 
         $config = new Config(
-            new ArrayScopeConfig(['test_embroidery/general/enabled' => $enabled ? '1' : '0']),
+            $this->scopeConfig(['test_embroidery/general/enabled' => $enabled ? '1' : '0']),
             'test_embroidery'
         );
 
         return new ApplyEmbroideryPrice($reader, $calculator, new Json(), $config, $this->logger);
+    }
+
+    /**
+     * @param array<string, mixed> $values
+     */
+    private function scopeConfig(array $values): ScopeConfigInterface
+    {
+        $scopeConfig = $this->createMock(ScopeConfigInterface::class);
+        $scopeConfig->method('getValue')->willReturnCallback(
+            static fn (string $path): mixed => $values[$path] ?? null
+        );
+        $scopeConfig->method('isSetFlag')->willReturnCallback(
+            static fn (string $path): bool => !in_array($values[$path] ?? null, [null, '', '0', 0, false], true)
+        );
+
+        return $scopeConfig;
     }
 }

@@ -13,7 +13,7 @@ namespace Commerce\Embroidery\Test\Unit\Controller\Options;
 use Commerce\Embroidery\Controller\Options\Index;
 use Commerce\Embroidery\Model\Config;
 use Commerce\Embroidery\Model\Personalization\OptionsProvider;
-use Commerce\Embroidery\Test\Unit\Fake\ArrayScopeConfig;
+use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Framework\App\Action\HttpGetActionInterface;
 use Magento\Framework\Controller\Result\Json;
 use Magento\Framework\Controller\Result\JsonFactory;
@@ -129,7 +129,7 @@ class IndexTest extends TestCase
         }
 
         $config = new Config(
-            new ArrayScopeConfig(['test_embroidery/general/enabled' => $enabled ? '1' : '0']),
+            $this->scopeConfig(['test_embroidery/general/enabled' => $enabled ? '1' : '0']),
             'test_embroidery'
         );
 
@@ -170,5 +170,21 @@ class IndexTest extends TestCase
         $factory->method('create')->willReturn($json);
 
         return $factory;
+    }
+
+    /**
+     * @param array<string, mixed> $values
+     */
+    private function scopeConfig(array $values): ScopeConfigInterface
+    {
+        $scopeConfig = $this->createMock(ScopeConfigInterface::class);
+        $scopeConfig->method('getValue')->willReturnCallback(
+            static fn (string $path): mixed => $values[$path] ?? null
+        );
+        $scopeConfig->method('isSetFlag')->willReturnCallback(
+            static fn (string $path): bool => !in_array($values[$path] ?? null, [null, '', '0', 0, false], true)
+        );
+
+        return $scopeConfig;
     }
 }
