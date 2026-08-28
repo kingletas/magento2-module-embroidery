@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:framework:Event/etc/events.xsd">
+    <!-- Totals collection, not the add-to-cart request. -->
+    <event name="sales_quote_item_collect_totals_before">
+        <observer name="commerce_embroidery_apply_price"
+                  instance="Commerce\Embroidery\Observer\ApplyEmbroideryPrice"/>
+    </event>
+    <event name="sales_order_place_before">
+        <observer name="commerce_embroidery_flag_order"
+                  instance="Commerce\Embroidery\Observer\FlagOrderWithEmbroidery"/>
+    </event>
+</config>

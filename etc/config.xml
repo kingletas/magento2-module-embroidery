@@ -1,0 +1,25 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Store:etc/config.xsd">
+    <default>
+        <commerce_embroidery>
+            <general>
+                <enabled>0</enabled>
+                <upload_size_message>JPG or PNG, up to 5 MB.</upload_size_message>
+            </general>
+            <charges>
+                <text_line_1_price>0.00</text_line_1_price>
+                <text_line_2_price>0.00</text_line_2_price>
+                <text_line_3_price>0.00</text_line_3_price>
+                <stock_logo_price>0.00</stock_logo_price>
+                <custom_logo_price>0.00</custom_logo_price>
+                <custom_logo_fee>0.00</custom_logo_fee>
+            </charges>
+            <notification>
+                <enabled>0</enabled>
+                <template>commerce_embroidery_order</template>
+                <sender_identity>general</sender_identity>
+            </notification>
+        </commerce_embroidery>
+    </default>
+</config>

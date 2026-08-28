@@ -1,0 +1,123 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
+
+    <preference for="Commerce\Embroidery\Api\Data\ThreadColorInterface"
+                type="Commerce\Embroidery\Model\ThreadColor"/>
+    <preference for="Commerce\Embroidery\Api\ThreadColorRepositoryInterface"
+                type="Commerce\Embroidery\Model\Repository\ThreadColorRepository"/>
+    <preference for="Commerce\Embroidery\Api\Data\ThreadColorSearchResultsInterface"
+                type="Commerce\Embroidery\Model\Repository\ThreadColorSearchResults"/>
+    <preference for="Commerce\Embroidery\Api\OrderExportMapperInterface"
+                type="Commerce\Embroidery\Model\Export\FieldMapExportMapper"/>
+
+    <type name="Commerce\Embroidery\Model\Config">
+        <arguments>
+            <argument name="section" xsi:type="string">commerce_embroidery</argument>
+        </arguments>
+    </type>
+
+    <!-- Form option lists, in di.xml. -->
+    <type name="Commerce\Embroidery\Model\Personalization\OptionsProvider">
+        <arguments>
+            <argument name="fontStyles" xsi:type="array">
+                <item name="block" xsi:type="string">Block</item>
+                <item name="script" xsi:type="string">Script</item>
+            </argument>
+            <argument name="logoLocations" xsi:type="array">
+                <item name="text_left_of_logo" xsi:type="string">Text to the left of the logo</item>
+                <item name="text_below_logo" xsi:type="string">Text centred below the logo</item>
+                <item name="text_right_of_logo" xsi:type="string">Text to the right of the logo</item>
+            </argument>
+            <argument name="logoTypes" xsi:type="array">
+                <item name="none" xsi:type="string">No logo</item>
+                <item name="stock" xsi:type="string">Stock logo</item>
+                <item name="custom" xsi:type="string">Upload my own</item>
+            </argument>
+        </arguments>
+    </type>
+
+    <!-- Field names for the downstream fulfilment system. -->
+    <type name="Commerce\Embroidery\Model\Export\FieldMapExportMapper">
+        <arguments>
+            <argument name="totalField" xsi:type="string">MonogramPrice</argument>
+            <argument name="detailsField" xsi:type="string">MonogramDetails</argument>
+            <argument name="sideFieldTemplates" xsi:type="array">
+                <item name="logo_price" xsi:type="string">%sLogoPrice</item>
+                <item name="line_1" xsi:type="string">%sLineOne</item>
+                <item name="line_2" xsi:type="string">%sLineTwo</item>
+                <item name="line_3" xsi:type="string">%sLineThree</item>
+            </argument>
+            <argument name="staticFields" xsi:type="array">
+                <item name="StockLogoEngraved" xsi:type="number">0</item>
+                <item name="EngraveTubePrice" xsi:type="number">0</item>
+                <item name="EngravingHeadPrice" xsi:type="number">0</item>
+            </argument>
+        </arguments>
+    </type>
+
+    <type name="Commerce\Embroidery\Model\Upload\LogoStorage">
+        <arguments>
+            <!--
+                `DriverInterface` has no preference in Magento, so it is named
+                here or the class cannot be built.
+            -->
+            <argument name="driver" xsi:type="object">Magento\Framework\Filesystem\Driver\File</argument>
+            <argument name="subDirectory" xsi:type="string">embroidery</argument>
+            <argument name="logger" xsi:type="object">Commerce\Embroidery\Logger</argument>
+        </arguments>
+    </type>
+
+    <!-- Copy embroidery options from the quote item to the order item. -->
+    <type name="Magento\Quote\Model\Quote\Item\ToOrderItem">
+        <plugin name="commerce_embroidery_copy_options"
+                type="Commerce\Embroidery\Plugin\CopyOptionsToOrderItem"/>
+    </type>
+
+    <!--
+        Carry has_embroidery from sales_order into sales_order_grid using
+        Magento's own grid sync, so the admin grid can filter and sort on it.
+    -->
+    <virtualType name="Magento\Sales\Model\ResourceModel\Order\Grid"
+                 type="Magento\Sales\Model\ResourceModel\Grid">
+        <arguments>
+            <argument name="columns" xsi:type="array">
+                <item name="has_embroidery" xsi:type="string">sales_order.has_embroidery</item>
+            </argument>
+        </arguments>
+    </virtualType>
+
+    <type name="Magento\ImportExport\Model\Import\SampleFileProvider">
+        <arguments>
+            <argument name="samples" xsi:type="array">
+                <item name="commerce_embroidery_thread_colors" xsi:type="string">Commerce_Embroidery</item>
+            </argument>
+        </arguments>
+    </type>
+
+    <type name="Commerce\Embroidery\Model\Personalization\SelectionReader">
+        <arguments><argument name="logger" xsi:type="object">Commerce\Embroidery\Logger</argument></arguments>
+    </type>
+    <type name="Commerce\Embroidery\Observer\ApplyEmbroideryPrice">
+        <arguments><argument name="logger" xsi:type="object">Commerce\Embroidery\Logger</argument></arguments>
+    </type>
+    <type name="Commerce\Embroidery\Controller\Logo\Upload">
+        <arguments><argument name="logger" xsi:type="object">Commerce\Embroidery\Logger</argument></arguments>
+    </type>
+
+    <virtualType name="Commerce\Embroidery\Logger\Handler" type="Commerce\Logger\Handler">
+        <arguments>
+            <argument name="fileName" xsi:type="string">embroidery.log</argument>
+            <argument name="subDirectory" xsi:type="string">commerce</argument>
+        </arguments>
+    </virtualType>
+    <virtualType name="Commerce\Embroidery\Logger" type="Commerce\Logger\Logger">
+        <arguments>
+            <argument name="name" xsi:type="string">commerce_embroidery</argument>
+            <argument name="handlers" xsi:type="array">
+                <item name="system" xsi:type="object">Commerce\Embroidery\Logger\Handler</item>
+            </argument>
+        </arguments>
+    </virtualType>
+
+</config>

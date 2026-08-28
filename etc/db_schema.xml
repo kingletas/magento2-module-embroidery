@@ -1,0 +1,51 @@
+<?xml version="1.0"?>
+<schema xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:framework:Setup/Declaration/Schema/etc/schema.xsd">
+    <table name="commerce_embroidery_thread_color" resource="default" engine="innodb"
+           comment="Embroidery thread colours">
+        <column xsi:type="int" name="thread_color_id" padding="10" unsigned="true"
+                nullable="false" identity="true" comment="Thread Colour ID"/>
+        <!-- A stable machine identifier. -->
+        <column xsi:type="varchar" name="code" nullable="false" length="64"
+                comment="Stable machine identifier, e.g. ceil-blue"/>
+        <column xsi:type="varchar" name="name" nullable="false" length="128" comment="Display name"/>
+        <column xsi:type="varchar" name="hex_code" nullable="false" length="7" comment="Swatch colour, #rrggbb"/>
+        <column xsi:type="varchar" name="pantone_code" nullable="true" length="32" comment="Pantone reference"/>
+        <column xsi:type="int" name="sort_order" padding="10" unsigned="true"
+                nullable="false" default="0" comment="Sort Order"/>
+        <column xsi:type="boolean" name="is_active" nullable="false" default="1" comment="Offered to shoppers"/>
+        <column xsi:type="timestamp" name="created_at" on_update="false" nullable="false"
+                default="CURRENT_TIMESTAMP" comment="Created At"/>
+        <column xsi:type="timestamp" name="updated_at" on_update="true" nullable="false"
+                default="CURRENT_TIMESTAMP" comment="Updated At"/>
+
+        <constraint xsi:type="primary" referenceId="PRIMARY">
+            <column name="thread_color_id"/>
+        </constraint>
+        <!-- Makes the import an upsert and stops a re-import duplicating the palette. -->
+        <constraint xsi:type="unique" referenceId="COMMERCE_EMBROIDERY_THREAD_COLOR_CODE">
+            <column name="code"/>
+        </constraint>
+        <!-- Serves the storefront's "active colours in sort order" query. -->
+        <index referenceId="COMMERCE_EMBROIDERY_THREAD_COLOR_IS_ACTIVE_SORT_ORDER" indexType="btree">
+            <column name="is_active"/>
+            <column name="sort_order"/>
+        </index>
+    </table>
+
+    <!--
+        Recorded on the order at placement, then copied into sales_order_grid
+        by Magento's own grid sync (see the grid columns in di.xml).
+    -->
+    <table name="sales_order">
+        <column xsi:type="boolean" name="has_embroidery" nullable="false" default="0"
+                comment="Any line carries embroidery"/>
+    </table>
+    <table name="sales_order_grid">
+        <column xsi:type="boolean" name="has_embroidery" nullable="false" default="0"
+                comment="Any line carries embroidery"/>
+        <index referenceId="SALES_ORDER_GRID_HAS_EMBROIDERY" indexType="btree">
+            <column name="has_embroidery"/>
+        </index>
+    </table>
+</schema>

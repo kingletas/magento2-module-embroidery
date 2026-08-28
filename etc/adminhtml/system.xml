@@ -1,0 +1,105 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Config:etc/system_file.xsd">
+    <system>
+        <section id="commerce_embroidery" translate="label" type="text" sortOrder="500"
+                 showInDefault="1" showInWebsite="1" showInStore="1">
+            <class>separator-top</class>
+            <label>Embroidery</label>
+            <tab>catalog</tab>
+            <resource>Commerce_Embroidery::config</resource>
+
+            <group id="general" translate="label" type="text" sortOrder="10"
+                   showInDefault="1" showInWebsite="1" showInStore="1">
+                <label>General</label>
+                <field id="enabled" translate="label" type="select" sortOrder="10"
+                       showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
+                    <label>Enable Embroidery</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                </field>
+                <field id="terms_cms_block" translate="label" type="select" sortOrder="20"
+                       showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Terms and Conditions Block</label>
+                    <source_model>Magento\Cms\Model\Config\Source\Block</source_model>
+                    <depends><field id="enabled">1</field></depends>
+                </field>
+                <field id="upload_info_cms_block" translate="label" type="select" sortOrder="30"
+                       showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Logo Upload Guidance Block</label>
+                    <source_model>Magento\Cms\Model\Config\Source\Block</source_model>
+                    <depends><field id="enabled">1</field></depends>
+                </field>
+                <field id="upload_size_message" translate="label" type="text" sortOrder="40"
+                       showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
+                    <label>Upload Size Message</label>
+                    <depends><field id="enabled">1</field></depends>
+                </field>
+            </group>
+
+            <group id="charges" translate="label comment" type="text" sortOrder="20"
+                   showInDefault="1" showInWebsite="1" showInStore="1">
+                <label>Charges</label>
+                <comment>Prices are per chest, except the custom logo fee which is charged once per line.</comment>
+                <field id="text_line_1_price" translate="label" type="text" sortOrder="10"
+                       showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
+                    <label>Text Line 1</label>
+                    <validate>validate-number validate-zero-or-greater</validate>
+                </field>
+                <field id="text_line_2_price" translate="label" type="text" sortOrder="20"
+                       showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
+                    <label>Text Line 2</label>
+                    <validate>validate-number validate-zero-or-greater</validate>
+                </field>
+                <field id="text_line_3_price" translate="label" type="text" sortOrder="30"
+                       showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
+                    <label>Text Line 3</label>
+                    <validate>validate-number validate-zero-or-greater</validate>
+                </field>
+                <field id="stock_logo_price" translate="label" type="text" sortOrder="40"
+                       showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
+                    <label>Stock Logo</label>
+                    <validate>validate-number validate-zero-or-greater</validate>
+                </field>
+                <field id="custom_logo_price" translate="label" type="text" sortOrder="50"
+                       showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
+                    <label>Custom Logo (per chest)</label>
+                    <validate>validate-number validate-zero-or-greater</validate>
+                </field>
+                <field id="custom_logo_fee" translate="label comment" type="text" sortOrder="60"
+                       showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
+                    <label>Custom Logo Setup Fee (per line)</label>
+                    <validate>validate-number validate-zero-or-greater</validate>
+                    <comment>Charged once per cart line, even when the same logo goes on both chests.</comment>
+                </field>
+            </group>
+
+            <group id="notification" translate="label" type="text" sortOrder="30"
+                   showInDefault="1" showInWebsite="1">
+                <label>Order Notification</label>
+                <field id="enabled" translate="label" type="select" sortOrder="10"
+                       showInDefault="1" showInWebsite="1" canRestore="1">
+                    <label>Notify on Embroidered Orders</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                </field>
+                <field id="recipients" translate="label comment" type="textarea" sortOrder="20"
+                       showInDefault="1" showInWebsite="1">
+                    <label>Recipients</label>
+                    <comment>Comma-separated email addresses.</comment>
+                    <depends><field id="enabled">1</field></depends>
+                </field>
+                <field id="sender_identity" translate="label" type="select" sortOrder="30"
+                       showInDefault="1" showInWebsite="1" canRestore="1">
+                    <label>Sender</label>
+                    <source_model>Magento\Config\Model\Config\Source\Email\Identity</source_model>
+                    <depends><field id="enabled">1</field></depends>
+                </field>
+                <field id="template" translate="label" type="select" sortOrder="40"
+                       showInDefault="1" showInWebsite="1" canRestore="1">
+                    <label>Template</label>
+                    <source_model>Magento\Config\Model\Config\Source\Email\Template</source_model>
+                    <depends><field id="enabled">1</field></depends>
+                </field>
+            </group>
+        </section>
+    </system>
+</config>

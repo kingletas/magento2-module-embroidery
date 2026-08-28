@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+<!--
+    /** * acl.xml * * @package Commerce_Embroidery * @copyright Copyright (c)
+    the Commerce modules authors */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:framework:Acl/etc/acl.xsd">
+    <acl>
+        <resources>
+            <resource id="Magento_Backend::admin">
+                <resource id="Magento_Backend::stores">
+                    <resource id="Magento_Backend::stores_other_settings">
+                        <resource id="Commerce_Embroidery::thread_colors" title="Embroidery Thread Colours" translate="title" sortOrder="80"/>
+                    </resource>
+                    <resource id="Magento_Backend::stores_settings">
+                        <resource id="Magento_Config::config">
+                            <resource id="Commerce_Embroidery::config" title="Embroidery Section" translate="title" sortOrder="500"/>
+                        </resource>
+                    </resource>
+                </resource>
+            </resource>
+        </resources>
+    </acl>
+</config>
