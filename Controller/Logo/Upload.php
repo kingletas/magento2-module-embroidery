@@ -1,11 +1,10 @@
 <?php
 /**
- * Upload.php
- *
- * @package     Commerce_Embroidery
- * @copyright   Copyright (c) the Commerce modules authors
- * @license     OSL-3.0 https://opensource.org/licenses/OSL-3.0
+ * @package   Commerce_Embroidery
+ * @copyright Copyright (c) the Commerce modules authors
+ * @license   OSL-3.0 https://opensource.org/licenses/OSL-3.0
  */
+
 declare(strict_types=1);
 
 namespace Commerce\Embroidery\Controller\Logo;
