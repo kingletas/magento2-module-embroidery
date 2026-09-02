@@ -24,6 +24,11 @@ parameters:
         -
             message: '#Call to an undefined method Magento\\Catalog\\Model\\Product::setIsSuperMode\(\)#'
             path: Observer/ApplyEmbroideryPrice.php
+            # The framework's docblock varies across the versions this package supports.
+            reportUnmatched: false
         # __() returns a Phrase, and Magento's own importers hand one straight
         # to this API; the parameter is documented as string and never was.
-        - '#of method Magento\\ImportExport\\Model\\Import\\Entity\\AbstractEntity::addMessageTemplate\(\) expects string, Magento\\Framework\\Phrase given#'
+        -
+            message: '#of method Magento\\ImportExport\\Model\\Import\\Entity\\AbstractEntity::addMessageTemplate\(\) expects string, Magento\\Framework\\Phrase given#'
+            # The framework's docblock varies across the versions this package supports.
+            reportUnmatched: false
