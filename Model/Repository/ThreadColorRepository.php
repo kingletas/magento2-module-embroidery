@@ -18,9 +18,11 @@ use Commerce\Embroidery\Model\ResourceModel\ThreadColor as ThreadColorResource;
 use Commerce\Embroidery\Model\ResourceModel\ThreadColor\CollectionFactory;
 use Commerce\Foundation\Model\Repository\SearchResultBuilder;
 use Magento\Framework\Api\SearchCriteriaInterface;
+use Exception;
 use Magento\Framework\Exception\CouldNotDeleteException;
 use Magento\Framework\Exception\CouldNotSaveException;
 use Magento\Framework\Exception\NoSuchEntityException;
+use Magento\Framework\Model\AbstractModel;
 use Throwable;
 
 class ThreadColorRepository implements ThreadColorRepositoryInterface
@@ -46,7 +48,7 @@ class ThreadColorRepository implements ThreadColorRepositoryInterface
     public function getById(int $threadColorId): ThreadColorInterface
     {
         $threadColor = $this->threadColorFactory->create();
-        $this->resource->load($threadColor, $threadColorId);
+        $this->resource->load($this->asModel($threadColor), $threadColorId);
 
         if ($threadColor->getThreadColorId() === null) {
             throw NoSuchEntityException::singleField(ThreadColorInterface::THREAD_COLOR_ID, $threadColorId);
@@ -102,7 +104,7 @@ class ThreadColorRepository implements ThreadColorRepositoryInterface
         // One query for every code still unknown, rather than one per code.
         foreach ($this->resource->loadByCodes($missing) as $code => $row) {
             $threadColor = $this->threadColorFactory->create();
-            $threadColor->setData($row);
+            $this->asModel($threadColor)->setData($row);
             $resolved[$code] = $this->byCode[$code] = $threadColor;
         }
 
@@ -136,7 +138,9 @@ class ThreadColorRepository implements ThreadColorRepositoryInterface
         $collection = $this->collectionFactory->create();
         $collection->addActiveFilter()->addDefaultOrder();
 
-        $this->active = array_values($collection->getItems());
+        /** @var ThreadColorInterface[] $active */
+        $active = array_values($collection->getItems());
+        $this->active = $active;
 
         // Populate the code index too: the storefront renders the swatch list
         // and then immediately looks colours up by code to price them.
@@ -153,9 +157,12 @@ class ThreadColorRepository implements ThreadColorRepositoryInterface
     public function save(ThreadColorInterface $threadColor): ThreadColorInterface
     {
         try {
-            $this->resource->save($threadColor);
+            $this->resource->save($this->asModel($threadColor));
         } catch (Throwable $e) {
-            throw new CouldNotSaveException(__('The thread colour could not be saved.'), $e);
+            throw new CouldNotSaveException(
+                __('The thread colour could not be saved.'),
+                $e instanceof Exception ? $e : null
+            );
         }
 
         $this->forgetCaches();
@@ -169,9 +176,12 @@ class ThreadColorRepository implements ThreadColorRepositoryInterface
     public function delete(ThreadColorInterface $threadColor): void
     {
         try {
-            $this->resource->delete($threadColor);
+            $this->resource->delete($this->asModel($threadColor));
         } catch (Throwable $e) {
-            throw new CouldNotDeleteException(__('The thread colour could not be deleted.'), $e);
+            throw new CouldNotDeleteException(
+                __('The thread colour could not be deleted.'),
+                $e instanceof Exception ? $e : null
+            );
         }
 
         $this->forgetCaches();
@@ -193,5 +203,20 @@ class ThreadColorRepository implements ThreadColorRepositoryInterface
     {
         $this->byCode = [];
         $this->active = null;
+    }
+
+    /**
+     * The resource model persists Magento models; the interface is all the
+     * public API promises, so the two are reconciled here.
+     */
+    private function asModel(ThreadColorInterface $threadColor): AbstractModel
+    {
+        if (!$threadColor instanceof AbstractModel) {
+            throw new CouldNotSaveException(
+                __('A thread colour has to be a Magento model before it can be stored.')
+            );
+        }
+
+        return $threadColor;
     }
 }

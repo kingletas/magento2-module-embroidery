@@ -66,7 +66,7 @@ class ThreadColorImport extends AbstractEntity
         Helper $resourceHelper,
         ProcessingErrorAggregatorInterface $errorAggregator,
         JsonHelper $jsonHelper,
-        private readonly ThreadColorResource $resource
+        private readonly ThreadColorResource $threadColorResource
     ) {
         $this->_importExportData = $importExportData;
         $this->_resourceHelper = $resourceHelper;
@@ -178,7 +178,7 @@ class ThreadColorImport extends AbstractEntity
             }
 
             if ($rows !== []) {
-                $written += $this->resource->upsertMany(array_values($rows));
+                $written += $this->threadColorResource->upsertMany(array_values($rows));
             }
         }
 
@@ -201,10 +201,10 @@ class ThreadColorImport extends AbstractEntity
             return false;
         }
 
-        $connection = $this->resource->getConnection();
+        $connection = $this->threadColorResource->getConnection();
 
         return $connection->delete(
-            $this->resource->getMainTable(),
+            $this->threadColorResource->getMainTable(),
             $connection->quoteInto(ThreadColorInterface::CODE . ' IN (?)', array_unique($codes))
         ) > 0;
     }

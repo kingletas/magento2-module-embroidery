@@ -33,7 +33,7 @@ class Collection extends AbstractCollection
 
     public function addActiveFilter(): self
     {
-        $this->addFieldToFilter(ThreadColorInterface::IS_ACTIVE, 1);
+        $this->addFieldToFilter(ThreadColorInterface::IS_ACTIVE, ['eq' => 1]);
 
         return $this;
     }

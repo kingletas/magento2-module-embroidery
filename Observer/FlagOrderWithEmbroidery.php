@@ -12,8 +12,8 @@ namespace Commerce\Embroidery\Observer;
 use Commerce\Embroidery\Model\Personalization\OptionCodeInterface;
 use Magento\Framework\Event\Observer;
 use Magento\Framework\Event\ObserverInterface;
-use Magento\Sales\Api\Data\OrderInterface;
-use Magento\Sales\Api\Data\OrderItemInterface;
+use Magento\Sales\Model\Order;
+use Magento\Sales\Model\Order\Item as OrderItem;
 
 /**
  * Records on the order whether any of its lines carries embroidery.
@@ -26,17 +26,17 @@ class FlagOrderWithEmbroidery implements ObserverInterface
     {
         $order = $observer->getEvent()->getData('order');
 
-        if (!$order instanceof OrderInterface) {
+        if (!$order instanceof Order) {
             return;
         }
 
         $order->setData(self::ATTRIBUTE, $this->hasEmbroideredItem($order) ? 1 : 0);
     }
 
-    private function hasEmbroideredItem(OrderInterface $order): bool
+    private function hasEmbroideredItem(Order $order): bool
     {
         foreach ($order->getItems() ?? [] as $item) {
-            if (!$item instanceof OrderItemInterface) {
+            if (!$item instanceof OrderItem) {
                 continue;
             }
 

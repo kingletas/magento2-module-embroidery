@@ -53,7 +53,7 @@ class CollectionTest extends TestCase
         $collection = $this->partialCollection(['addFieldToFilter']);
         $collection->expects($this->once())
             ->method('addFieldToFilter')
-            ->with(ThreadColorInterface::IS_ACTIVE, 1);
+            ->with(ThreadColorInterface::IS_ACTIVE, ['eq' => 1]);
 
         $this->assertSame($collection, $collection->addActiveFilter());
     }

@@ -4,6 +4,10 @@
 # allowed to pass vacuously.
 parameters:
     level: 6
+    # Registers the on-demand generator, so a Factory that only exists
+    # after `setup:di:compile` resolves here too.
+    bootstrapFiles:
+        - Test/generated-classes.php
     paths:
         - Api
         - Controller
@@ -15,6 +19,11 @@ parameters:
         - Test/*
     treatPhpDocTypesAsCertain: false
     ignoreErrors:
-        # Magento's models expose their columns through __call, so every
-        # getter on a core model is invisible to static analysis.
-        - '#Call to an undefined method Magento\\[A-Za-z\\]+::(get|set|has)[A-Za-z]+\(\)#'
+        # setIsSuperMode() really is a magic setter: Product stores it through
+        # DataObject rather than declaring it.
+        -
+            message: '#Call to an undefined method Magento\\Catalog\\Model\\Product::setIsSuperMode\(\)#'
+            path: Observer/ApplyEmbroideryPrice.php
+        # __() returns a Phrase, and Magento's own importers hand one straight
+        # to this API; the parameter is documented as string and never was.
+        - '#of method Magento\\ImportExport\\Model\\Import\\Entity\\AbstractEntity::addMessageTemplate\(\) expects string, Magento\\Framework\\Phrase given#'

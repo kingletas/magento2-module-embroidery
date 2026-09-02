@@ -11,8 +11,10 @@ namespace Commerce\Embroidery\Plugin;
 
 use Commerce\Embroidery\Model\Personalization\OptionCodeInterface;
 use Magento\Quote\Api\Data\CartItemInterface;
+use Magento\Quote\Model\Quote\Item as QuoteItem;
 use Magento\Quote\Model\Quote\Item\ToOrderItem;
 use Magento\Sales\Api\Data\OrderItemInterface;
+use Magento\Sales\Model\Order\Item as OrderItem;
 
 /**
  * Copies embroidery options from the quote item onto the order item.
@@ -32,6 +34,12 @@ class CopyOptionsToOrderItem
         CartItemInterface $item,
         $additionalOptions = []
     ): OrderItemInterface {
+        // convert() may be handed an address item, and a third party may
+        // return another OrderItemInterface; neither carries these options.
+        if (!$orderItem instanceof OrderItem || !$item instanceof QuoteItem) {
+            return $orderItem;
+        }
+
         $productOptions = $orderItem->getProductOptions();
 
         if (!is_array($productOptions)) {

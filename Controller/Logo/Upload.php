@@ -13,6 +13,7 @@ use Commerce\Embroidery\Model\Config;
 use Commerce\Embroidery\Model\Personalization\Side;
 use Commerce\Embroidery\Model\Upload\LogoStorage;
 use Magento\Framework\App\Action\HttpPostActionInterface;
+use Magento\Framework\App\Request\Http as HttpRequest;
 use Magento\Framework\App\RequestInterface;
 use Magento\Framework\Controller\Result\Json;
 use Magento\Framework\Controller\Result\JsonFactory;
@@ -97,6 +98,10 @@ class Upload implements HttpPostActionInterface
 
     private function hasFile(string $fileKey): bool
     {
+        if (!$this->request instanceof HttpRequest) {
+            return false;
+        }
+
         $file = $this->request->getFiles($fileKey);
 
         return is_array($file) && ($file['error'] ?? UPLOAD_ERR_NO_FILE) !== UPLOAD_ERR_NO_FILE;

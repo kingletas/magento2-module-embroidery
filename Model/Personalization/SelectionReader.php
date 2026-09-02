@@ -11,7 +11,9 @@ namespace Commerce\Embroidery\Model\Personalization;
 
 use Magento\Framework\Serialize\SerializerInterface;
 use Magento\Quote\Api\Data\CartItemInterface;
+use Magento\Quote\Model\Quote\Item as QuoteItem;
 use Magento\Sales\Api\Data\OrderItemInterface;
+use Magento\Sales\Model\Order\Item as OrderItem;
 use Psr\Log\LoggerInterface;
 use Throwable;
 
@@ -32,11 +34,16 @@ class SelectionReader
      */
     public function isEmbroidered(CartItemInterface $item): bool
     {
-        return $item->getOptionByCode(OptionCodeInterface::OPTIONS) !== null;
+        return $item instanceof QuoteItem
+            && $item->getOptionByCode(OptionCodeInterface::OPTIONS) !== null;
     }
 
     public function fromQuoteItem(CartItemInterface $item): ?EmbroiderySelection
     {
+        if (!$item instanceof QuoteItem) {
+            return null;
+        }
+
         $option = $item->getOptionByCode(OptionCodeInterface::OPTIONS);
 
         return $option === null ? null : $this->decode((string) $option->getValue());
@@ -44,6 +51,10 @@ class SelectionReader
 
     public function fromOrderItem(OrderItemInterface $item): ?EmbroiderySelection
     {
+        if (!$item instanceof OrderItem) {
+            return null;
+        }
+
         $options = $item->getProductOptions();
 
         if (!is_array($options) || !isset($options[OptionCodeInterface::OPTIONS])) {
