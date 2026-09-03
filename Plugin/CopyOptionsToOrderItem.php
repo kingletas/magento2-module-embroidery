@@ -24,7 +24,7 @@ class CopyOptionsToOrderItem
     /**
      * @param array<string, mixed> $additionalOptions
      *
-     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
+     * @SuppressWarnings("PHPMD.UnusedFormalParameter")
      *
      * phpcs:disable SlevomatCodingStandard.TypeHints.ParameterTypeHint.MissingNativeTypeHint
      */

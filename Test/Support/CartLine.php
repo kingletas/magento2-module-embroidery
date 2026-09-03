@@ -15,7 +15,7 @@ use Magento\Quote\Model\Quote\Item as QuoteItem;
 /**
  * One line of a cart.
  *
- * @SuppressWarnings(PHPMD.MissingConstructor)
+ * @SuppressWarnings("PHPMD.MissingConstructor")
  */
 class CartLine extends QuoteItem
 {

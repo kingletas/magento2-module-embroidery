@@ -14,7 +14,7 @@ use Magento\Catalog\Model\Product;
 /**
  * The product behind a cart line, priced.
  *
- * @SuppressWarnings(PHPMD.MissingConstructor)
+ * @SuppressWarnings("PHPMD.MissingConstructor")
  */
 class PricedProduct extends Product
 {
